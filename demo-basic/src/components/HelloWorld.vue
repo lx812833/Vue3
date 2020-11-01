@@ -1,60 +1,99 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript" target="_blank" rel="noopener">typescript</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <h1>{{ count }}</h1>
+    <h2>{{ double }}</h2>
+    <button @click="increase">赞+1</button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import {
+  defineComponent,
+  computed,
+  reactive,
+  ref,
+  toRefs,
+  onMounted,
+  onUpdated,
+  watch,
+} from "vue";
+interface DataProps {
+  count: number;
+  double: number;
+  increase: () => void;
+}
+interface Person {
+  name: string;
+  age: number;
+}
 
 export default defineComponent({
-  name: 'HelloWorld',
-  props: {
-    msg: String,
+  name: "HelloWorld",
+  setup() {
+    onMounted(() => {
+      console.log("onMounted");
+    });
+    onUpdated(() => {
+      console.log("onUpdated");
+    });
+    // 不使用reactive
+    // const count = ref(0);
+    // const double = computed(() => {
+    //   return count.value * 2;
+    // });
+    // const increase = () => {
+    //   count.value++;
+    // };
+    // return {
+    //   count,
+    //   double,
+    //   increase,
+    // };
+
+    // 使用reactive
+    const data: DataProps = reactive({
+      count: 0,
+      double: computed(() => data.count * 2),
+      increase: () => {
+        // age.value++; // 不使用reactive时需用 .value 获取其值
+        data.count++;
+      },
+    });
+
+    // watch监听单个值
+    // const age = ref<number>(18);
+    // watch(age, (newVal, oldVal) => {
+    //   console.log("newVal", newVal, "oldVal", oldVal);
+    // });
+
+    // watch监听多个值
+    const state = reactive<Person>({ name: "vue", age: 10 });
+    watch(
+      [() => state.age, () => state.name],
+      ([newName, newAge], [oldName, oldAge]) => {
+        console.log(newName);
+        console.log(newAge);
+
+        console.log(oldName);
+        console.log(oldAge);
+      }
+    );
+    setTimeout(() => {
+      stop(); // 此时修改时, 不会触发watch 回调
+      state.age = 1000;
+      state.name = "vue3-";
+    }, 1000); // 1秒之后讲取消watch的监听
+
+    const refData = toRefs(data);
+    return {
+      ...refData,
+      // age,
+      ...toRefs(state),
+    };
   },
 });
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 </style>
