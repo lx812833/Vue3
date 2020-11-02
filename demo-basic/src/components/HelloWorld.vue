@@ -2,6 +2,9 @@
   <div class="hello">
     <h1>{{ count }}</h1>
     <h2>{{ double }}</h2>
+    <h1>x: {{ x }} y: {{ y }}</h1>
+    <h2 v-if="loading">loading!...</h2>
+    <img v-if="loaded" :src="result.message" />
     <button @click="increase">赞+1</button>
   </div>
 </template>
@@ -11,12 +14,14 @@ import {
   defineComponent,
   computed,
   reactive,
-  ref,
   toRefs,
   onMounted,
   onUpdated,
   watch,
 } from "vue";
+import useMousePosition from "../mixin/useMousePosition";
+import useLoader from "../mixin/useLoader";
+
 interface DataProps {
   count: number;
   double: number;
@@ -25,6 +30,10 @@ interface DataProps {
 interface Person {
   name: string;
   age: number;
+}
+interface Result {
+  message: string;
+  success: string;
 }
 
 export default defineComponent({
@@ -60,24 +69,28 @@ export default defineComponent({
       },
     });
 
+    const { x, y } = useMousePosition();
+    const { result, loading, loaded } = useLoader<Result>("https://dog.ceo/api/breeds/image/random");
+
     // watch监听单个值
-    // const age = ref<number>(18);
-    // watch(age, (newVal, oldVal) => {
-    //   console.log("newVal", newVal, "oldVal", oldVal);
-    // });
+    watch(result, () => {
+      if(result.value) {
+        console.log("result", result.value.message);
+      }
+    });
 
     // watch监听多个值
     const state = reactive<Person>({ name: "vue", age: 10 });
-    watch(
-      [() => state.age, () => state.name],
-      ([newName, newAge], [oldName, oldAge]) => {
-        console.log(newName);
-        console.log(newAge);
+    // watch(
+    //   [() => state.age, () => state.name],
+    //   ([newName, newAge], [oldName, oldAge]) => {
+    //     console.log(newName);
+    //     console.log(newAge);
 
-        console.log(oldName);
-        console.log(oldAge);
-      }
-    );
+    //     console.log(oldName);
+    //     console.log(oldAge);
+    //   }
+    // );
     setTimeout(() => {
       stop(); // 此时修改时, 不会触发watch 回调
       state.age = 1000;
@@ -89,6 +102,11 @@ export default defineComponent({
       ...refData,
       // age,
       ...toRefs(state),
+      x,
+      y,
+      result,
+      loading,
+      loaded,
     };
   },
 });
