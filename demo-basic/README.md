@@ -188,3 +188,36 @@ setTimeout(() => {
   state.name = "vue3-";
 }, 1000); // 1秒之后讲取消watch的监听
 ```
+
+
+#### teleport属性
+
+`teleport` 是一种能够将我模板移动到 DOM 中 Vue app 之外的其他位置的属性，就有点像哆啦A梦的“任意门”。
+
+**场景**：像 `Modals`, `Toast` 等这样的元素，很多情况下，需要将它完全的和 Vue 应用的 `DOM` 完全剥离，管理起来反而会方便容易很多。原因在于如果将其嵌套在 Vue 的某个组件内部，那么处理嵌套组件的`定位`、`z-index` 和`样式`就会变得很困难。
+
+另外，像 `Modals`, `Toast`  等这样的元素需要使用到 Vue 组件的状态（data 或者 props）的值，然后在 Vue 应用的范围之外渲染它。
+
+运用：
+
+```python
+// 子组件 Modals.vue
+
+<template>
+  <teleport to="#modal">
+    <div id="center" v-if="isOpen">
+      <h2><slot>teleport运用</slot></h2>
+      <button @click="buttonClick">Close</button>
+    </div>
+  </teleport>
+</template>
+
+// 父组件
+<modals :isOpen="modalisOpen" @close-modal="handleCloseModal"></modals>
+
+// 根文件 index.html
+
+
+<div id="app"></div>
+<div id="modal"></div>
+```

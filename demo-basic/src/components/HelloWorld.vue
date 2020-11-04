@@ -1,8 +1,11 @@
 <template>
   <div class="hello">
+    <h1>{{ msg }}</h1>
     <h1>{{ count }}</h1>
     <h2>{{ double }}</h2>
     <h1>x: {{ x }} y: {{ y }}</h1>
+    <button @click="handleOpenModal">Open</button>
+    <modals :isOpen="modalisOpen" @close-modal="handleCloseModal"></modals>
     <h2 v-if="loading">loading!...</h2>
     <img v-if="loaded" :src="result.message" />
     <button @click="increase">赞+1</button>
@@ -14,6 +17,7 @@ import {
   defineComponent,
   computed,
   reactive,
+  ref,
   toRefs,
   onMounted,
   onUpdated,
@@ -21,6 +25,7 @@ import {
 } from "vue";
 import useMousePosition from "../mixin/useMousePosition";
 import useLoader from "../mixin/useLoader";
+import Modals from "./Modals.vue";
 
 interface DataProps {
   count: number;
@@ -38,7 +43,19 @@ interface Result {
 
 export default defineComponent({
   name: "HelloWorld",
-  setup() {
+  props: {
+    msg: {
+      type: String,
+    },
+  },
+  components: {
+    Modals,
+  },
+  setup(props, context) {
+    /**
+     * props: 响应式 (props.msg)
+     * context: 上下文
+     */
     onMounted(() => {
       console.log("onMounted");
     });
@@ -74,7 +91,7 @@ export default defineComponent({
 
     // watch监听单个值
     watch(result, () => {
-      if(result.value) {
+      if (result.value) {
         console.log("result", result.value.message);
       }
     });
@@ -98,6 +115,17 @@ export default defineComponent({
     }, 1000); // 1秒之后讲取消watch的监听
 
     const refData = toRefs(data);
+
+    // teleport 父子组件事件传递
+    const modalisOpen = ref<boolean>(false);
+    const handleCloseModal = () => {
+      console.log("点击了关闭");
+      modalisOpen.value = false;
+    };
+    const handleOpenModal = () => {
+      modalisOpen.value = true;
+    }
+
     return {
       ...refData,
       // age,
@@ -107,6 +135,9 @@ export default defineComponent({
       result,
       loading,
       loaded,
+      modalisOpen,
+      handleCloseModal,
+      handleOpenModal
     };
   },
 });
