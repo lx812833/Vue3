@@ -3,6 +3,14 @@
     <h1>{{ msg }}</h1>
     <h1>{{ count }}</h1>
     <h2>{{ double }}</h2>
+    <Suspense>
+      <template #default>
+        <async-show />
+      </template>
+      <template #fallback>
+        <h1>loading ! ...</h1>
+      </template>
+    </Suspense>
     <h1>x: {{ x }} y: {{ y }}</h1>
     <button @click="handleOpenModal">Open</button>
     <modals :isOpen="modalisOpen" @close-modal="handleCloseModal"></modals>
@@ -22,10 +30,12 @@ import {
   onMounted,
   onUpdated,
   watch,
+  Suspense,
 } from "vue";
 import useMousePosition from "../mixin/useMousePosition";
 import useLoader from "../mixin/useLoader";
 import Modals from "./Modals.vue";
+import AsyncShow from "./AsyncShow.vue";
 
 interface DataProps {
   count: number;
@@ -50,6 +60,7 @@ export default defineComponent({
   },
   components: {
     Modals,
+    AsyncShow,
   },
   setup(props, context) {
     /**
@@ -124,7 +135,7 @@ export default defineComponent({
     };
     const handleOpenModal = () => {
       modalisOpen.value = true;
-    }
+    };
 
     return {
       ...refData,
@@ -137,7 +148,7 @@ export default defineComponent({
       loaded,
       modalisOpen,
       handleCloseModal,
-      handleOpenModal
+      handleOpenModal,
     };
   },
 });
