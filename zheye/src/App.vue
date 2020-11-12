@@ -20,7 +20,7 @@ const testData: ColumnProps[] = [
   },
   {
     id: 2,
-    // avatar: "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1078861629,3747050294&fm=26&gp=0.jpg",
+    avatar: "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1078861629,3747050294&fm=26&gp=0.jpg",
     title: "title2",
     description: "desc2",
   },
