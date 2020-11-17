@@ -1,15 +1,22 @@
 <template>
   <div class="container">
     <global-header :user="user"></global-header>
-    <column-list :list="list"></column-list>
+    <!-- <column-list :list="list"></column-list> -->
+    <from action="">
+      <div class="mb-3">
+        <label class="form-label" for="exampleInputEmail">邮箱地址</label>
+        <validate-input :rules="emailRules"></validate-input>
+      </div>
+    </from>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, reactive } from "vue";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ColumnList, { ColumnProps } from "./components/ColumnList.vue";
 import GlobalHeader, { UserProps } from "./components/GlobalHeader.vue";
+import ValidateInput , { RuleProps } from "./components/ValidateInput.vue";
 
 const testData: ColumnProps[] = [
   {
@@ -39,20 +46,26 @@ const testData: ColumnProps[] = [
 ];
 const currentUser: UserProps = {
   isLogin: true,
-  name: "lx"
-}
+  name: "lx",
+};
+const emailRules: RuleProps = [
+  { type: "required", message: "can not be empty" },
+  { type: "email", message: "should be valid email" }
+]
 
 export default defineComponent({
   name: "App",
   components: {
     ColumnList,
-    GlobalHeader
+    GlobalHeader,
+    ValidateInput
   },
   setup() {
     return {
       list: testData,
-      user: currentUser
-    }
-  }
+      user: currentUser,
+      emailRules: emailRules,
+    };
+  },
 });
 </script>
