@@ -25,6 +25,11 @@ export type RuleProps = RuleProp[];
 
 export default defineComponent({
   name: "ValidateInput",
+  /**
+   * inheritAttrs: false 设置为false，不希望组件的根元素继承 attribute（属性）
+   * inheritAttrs: false 和 $attrs，可以手动决定这些 attribute 会被赋予哪个元素
+   */
+  inheritAttrs: false,
   props: {
     rules: Array as PropType<RuleProps>,
   },
@@ -34,6 +39,7 @@ export default defineComponent({
       error: false,
       message: "",
     });
+    console.log("attrs", context.attrs);
     const validateInput = () => {
       if (props.rules) {
         const allPased = props.rules.every((rule) => {
@@ -52,7 +58,9 @@ export default defineComponent({
           return passed;
         });
         inputRef.error = !allPased;
+        return allPased;
       }
+      return true;
     };
 
     return {
