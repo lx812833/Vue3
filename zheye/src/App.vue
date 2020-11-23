@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <global-header :user="user"></global-header>
+    <router-view></router-view>
     <!-- <column-list :list="list"></column-list> -->
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
