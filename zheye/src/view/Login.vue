@@ -19,6 +19,9 @@
 
 <script lang="ts">
 import { defineComponent, reactive, PropType, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { GlobalDataProps } from "../store";
 import ValidateForm from "../components/ValidateForm.vue";
 import ValidateInput , { RuleProps } from "../components/ValidateInput.vue";
 
@@ -29,6 +32,8 @@ export default defineComponent({
     ValidateForm
   },
   setup() {
+    const router = useRouter();
+    const state = useStore<GlobalDataProps>();
     const emailRules: RuleProps = [
       { type: "required", message: "邮箱不能为空" },
       { type: "email", message: "邮箱格式不正确" }
@@ -41,6 +46,10 @@ export default defineComponent({
     const inputRef = ref<any>();
     const onFormSubmit = (result: boolean) => {
       console.log("登陆了", inputRef.value.validateInput());
+      if(result) {
+        router.push("/");
+        state.commit("login");
+      }
     }
     return {
       emailRules,
