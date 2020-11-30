@@ -5,7 +5,7 @@ export interface ColumnProps {
   description: string;
 }
 export interface PostProps {
-  id: number;
+  id?: number;
   title: string;
   content: string;
   image?: string;
