@@ -66,6 +66,10 @@ setup() {
   },
   
  显示时直接调用即可。
+
+基本类型值（String 、Nmuber 、Boolean 等）或单值对象（类似像 {count: 3} 这样只有一个属性值的对象）使用 ref
+
+引用类型值（Object 、Array）使用 reactive
 ```
 
 #### reactive 函数

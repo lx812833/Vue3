@@ -1,5 +1,6 @@
 <template>
   <teleport to="#modal">
+    <!-- 用vue2的mount()方法挂载到指定dom元素上 -->
     <div id="center" v-if="isOpen">
       <h2><slot>teleport运用</slot></h2>
       <button @click="buttonClick">Close</button>
