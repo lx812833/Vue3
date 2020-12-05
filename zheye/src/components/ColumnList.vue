@@ -29,6 +29,7 @@ export default defineComponent({
     list: {
       type: Array as PropType<ColumnProps[]>,
       /**
+       * （Array是js的基本数据类型，需要将其利用 TypeScript 对TypeScript进行类型指派）
        * Vue 对定义了 type 的 props 执行运行时验证,要将这些类型提供给 TypeScript，需要使用 PropType 对构造方法进行指派：
        * */
       required: true,
