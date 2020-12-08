@@ -1,30 +1,21 @@
-import { defineComponent, h, reactive, ref } from 'vue';
-import HelloWorld from "@/components/HelloWorld.vue";
-const img = require("./assets/logo.png");
+import { defineComponent } from 'vue';
+import MonacoEditor from "./components/MonacoEditor";
 
-function renderHelloWorld(str: string) {
-  return <HelloWorld msg={str} />
+function handleToJson(data: any) {
+  return JSON.stringify(data, null, 2);
+}
+
+const Schema = {
+  type: "string"
 }
 
 export default defineComponent({
   setup() {
-    const state = reactive({
-      name: "lx"
-    })
-    const numRef = ref<number>(1);
-
-    setInterval(() => {
-      state.name += "1";
-      numRef.value += 1;
-    }, 10000000);
-
     return () => {
-      const number = numRef.value;
+      const code = handleToJson(Schema);
       return (
-        <div id="app">
-          <img src={img} alt="Vue logo" srcset="" />
-          {renderHelloWorld("Vue3.0中使用jsx")}
-          <p>{state.name + number}</p>
+        <div>
+          <MonacoEditor code={code} />
         </div>
       )
     }
