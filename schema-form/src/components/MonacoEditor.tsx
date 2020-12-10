@@ -98,7 +98,9 @@ export default defineComponent({
       const classes = classesRef.value;
       return (
         <div class={classes.container}>
-          <div class={classes.title}><span>{props.title}</span></div>
+          <div class={classes.title}>
+            <span>{props.title}</span>
+          </div>
           <div class={classes.code} ref={containerRef}></div>
         </div>
       )
