@@ -3,6 +3,7 @@ import MonacoEditor from "./components/MonacoEditor";
 import { createUseStyles } from "vue-jss";
 
 import demos from "./demos";
+import SchemaForm from "../lib";
 
 type Schema = any;
 type UISchema = any;
@@ -100,6 +101,11 @@ export default defineComponent({
       demo.customValidate = d.customValidate;
     })
 
+    const handleChange = (v: any) => {
+      demo.data = v;
+      demo.dataCode = handleToJson(v);
+    }
+
     const handleCodeChange = (filed: "schema" | "data" | "uiSchema", value: string) => {
       try {
         const json = JSON.parse(value);
@@ -143,25 +149,29 @@ export default defineComponent({
                 class={classes.codePanel}
                 onChange={handleSchemaChange}
                 title="Schema"
-              />
+              ></MonacoEditor>
               <div class={classes.uiAndValue}>
                 <MonacoEditor
                   code={demo.uiSchemaCode}
                   class={classes.codePanel}
                   onChange={handleUISchemaChange}
                   title="UISchema"
-                />
+                ></MonacoEditor>
                 <MonacoEditor
                   code={demo.dataCode}
                   class={classes.codePanel}
                   onChange={handleDataChange}
                   title="Value"
-                />
+                ></MonacoEditor>
               </div>
             </div>
             <div class={classes.form}>
-              SchemaForm
-          </div>
+              <SchemaForm
+                schema={demo.schema}
+                onChange={handleChange}
+                value={demo.data}
+              ></SchemaForm>
+            </div>
           </div>
         </div>
       )
