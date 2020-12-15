@@ -4,7 +4,9 @@ export default defineComponent({
   name: "StringField",
   setup() {
     return () => {
-      <div>StringField</div>
+      return (
+        <div>StringField</div>
+      )
     }
   }
 })
