@@ -25,6 +25,7 @@ export default defineComponent({
     const context: any = {
       SchemaItem
     }
+    // provide向子节点提供SchemaItem组件
     provide(SchemaFormContextKey, context);
 
     return () => {
