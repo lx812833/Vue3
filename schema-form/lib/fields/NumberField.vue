@@ -1,10 +1,10 @@
 <template>
-  <input type="text" :value="value" @input="handleChange" />
+  <input type="number" :value="value" @input="handleChange" />
 </template>
 
 <script lang="ts">
 import { FiledPropsDefine, Schema } from "../types";
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 
 // 声明全局 props
 declare const props: {
@@ -14,16 +14,21 @@ declare const props: {
 }
 
 export default defineComponent({
-  name: "StringField",
+  name: "NumberFeild",
   props: FiledPropsDefine,
   setup(props) {
     const handleChange = (e: any) => {
-      props.onChange(e.target.value);
+      const value = e.target.value
+      const num = Number(value)
+      if (Number.isNaN(num)) {
+        props.onChange(undefined)
+      } else {
+        props.onChange(num)
+      }
     }
     return {
       handleChange
     }
   }
 })
-
 </script>
