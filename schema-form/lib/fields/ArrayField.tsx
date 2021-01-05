@@ -1,6 +1,7 @@
 import { defineComponent, PropType } from "vue";
 import { FiledPropsDefine, Schema } from '../types';
 import { useVJSFContext } from "../context";
+import SelectionWidget from "../widgets/Selection";
 import { createUseStyles } from "vue-jss";
 
 const useStyles = createUseStyles({
@@ -147,8 +148,8 @@ export default defineComponent({
       } else if (!isSelect) {
         const array = Array.isArray(value) ? value : [];
         return array.map((v: Schema, index: number) => {
-          return <ArrayItemWrapper 
-            index={index} 
+          return <ArrayItemWrapper
+            index={index}
             onAdd={handleAdd}
             onDelete={handleDelete}
             onUp={handleUp}
@@ -163,6 +164,17 @@ export default defineComponent({
             ></SchemaItem>
           </ArrayItemWrapper>
         })
+      } else {
+        const enumOptions = (schema as any).items.enum;
+        const options = enumOptions.map((item: any) => ({
+          key: item,
+          value: item
+        }))
+        return <SelectionWidget
+          onChange={props.onChange}
+          value={props.value}
+          options={options}
+        ></SelectionWidget>
       }
     }
   }
