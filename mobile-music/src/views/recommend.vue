@@ -3,10 +3,22 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
+import { getRecommend } from "@/server/recommend";
 
 export default defineComponent({
 	name: "Recommend",
+	setup() {
+		onMounted(() => {
+			getRecommend().then(res => {
+				console.log("推荐列表", res);
+			})
+		})
+
+		return {
+
+		}
+	}
 });
 </script>
 
