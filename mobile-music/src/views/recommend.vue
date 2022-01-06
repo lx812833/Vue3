@@ -9,7 +9,7 @@
 				</div>
 
 				<div class="recommend-list">
-					<h1 class="list-title">热门歌单推荐</h1>
+					<h1 class="list-title" v-show="!loading">热门歌单推荐</h1>
 					<ul>
 						<li class="item" v-for="item in albums" :key="item.id">
 							<div class="icon">
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, reactive, toRefs } from "vue";
+import { defineComponent, onMounted, reactive, toRefs, computed } from "vue";
 import { getRecommend } from "@/server/recommend";
 import Slider from "@/components/base/slider/slider";
 import Scroll from "@/components/base/scroll/scroll";
@@ -45,6 +45,10 @@ export default defineComponent({
 			albums: [], // 热门歌单
 		});
 
+		const loading = computed(() => {
+			return !state.sliders.length && !state.albums.length;
+		});
+
 		onMounted(() => {
 			getRecommend().then((res) => {
 				const { sliders, albums } = res;
@@ -55,6 +59,7 @@ export default defineComponent({
 
 		return {
 			...toRefs(state),
+			loading,
 		};
 	},
 });
