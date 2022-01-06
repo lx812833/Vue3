@@ -21,7 +21,7 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import useSlider from "./useSlider";
+import { useSlider } from "./useSlider";
 
 export default defineComponent({
 	name: "Slider",
@@ -82,7 +82,7 @@ export default defineComponent({
 			&.active {
 				width: 20px;
 				border-radius: 5px;
-				backgroud: $color-text-ll;
+				background: $color-text-ll;
 			}
 		}
 	}
