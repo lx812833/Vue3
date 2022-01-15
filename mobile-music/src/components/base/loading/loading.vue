@@ -14,9 +14,12 @@ export default defineComponent({
 	name: "Loading",
 	setup() {
 		const title = ref("正在载入...");
-
+		const setLoadingTitle = (val) => {
+      title.value = val;
+		};
 		return {
 			title,
+			setLoadingTitle,
 		};
 	},
 });

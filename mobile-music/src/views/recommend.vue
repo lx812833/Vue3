@@ -1,5 +1,5 @@
 <template>
-	<div class="recommend" v-loading="loading">
+	<div class="recommend" v-loading:[loadingText]="loading">
 		<scroll class="recommend-content">
 			<div>
 				<div class="slider-wrapper">
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, reactive, toRefs, computed } from "vue";
+import { defineComponent, onMounted, reactive, toRefs, computed, ref } from "vue";
 import { getRecommend } from "@/server/recommend";
 import Slider from "@/components/base/slider/slider";
 import Scroll from "@/components/base/scroll/scroll";
@@ -44,7 +44,7 @@ export default defineComponent({
 			sliders: [], // 轮播图
 			albums: [], // 热门歌单
 		});
-
+		const loadingText = ref("正在加载中...");
 		const loading = computed(() => {
 			return !state.sliders.length && !state.albums.length;
 		});
@@ -60,6 +60,7 @@ export default defineComponent({
 		return {
 			...toRefs(state),
 			loading,
+			loadingText,
 		};
 	},
 });
