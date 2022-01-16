@@ -4,14 +4,21 @@ import { onMounted, onUnmounted, ref } from "vue";
 
 BScroll.use(ObserveDOM);
 
-export const useScroll = (wrapper, options) => {
+export const useScroll = (wrapper, options, emit) => {
   const scroll = ref(null);
 
   onMounted(() => {
-    scroll.value = new BScroll(wrapper.value, {
+    const scrollVal = scroll.value = new BScroll(wrapper.value, {
       observeDOM: true,
       ...options
     });
+
+    // 监听实时滚动事件
+    if(options.probeType > 0) {
+      scrollVal.on("scroll", (pos) => {
+        emit("scroll", pos)
+      })
+    }
   })
 
   onUnmounted(() => {
