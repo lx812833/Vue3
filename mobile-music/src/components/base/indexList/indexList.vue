@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import Scroll from "@/components/base/scroll/scroll";
 import { useFixed } from "./useFixed";
 
@@ -34,8 +34,7 @@ export default defineComponent({
 		},
 	},
 	setup(props) {
-		let fixedStyle = ref("");
-		const { groupRef, onScroll, fixedTitle } = useFixed(props);
+		const { groupRef, onScroll, fixedTitle, fixedStyle } = useFixed(props);
 
 		return {
 			fixedTitle,
