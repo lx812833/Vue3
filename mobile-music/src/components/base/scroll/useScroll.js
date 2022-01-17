@@ -24,4 +24,6 @@ export const useScroll = (wrapper, options, emit) => {
   onUnmounted(() => {
     scroll.value.destroy();
   })
+
+  return scroll;
 }

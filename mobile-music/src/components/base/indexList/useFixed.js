@@ -65,6 +65,8 @@ export const useFixed = (props) => {
     groupRef,
     onScroll,
     fixedTitle,
-    fixedStyle
+    fixedStyle,
+    currentIndex,
+    shortcutList: []
   }
 }
