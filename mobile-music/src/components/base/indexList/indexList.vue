@@ -16,12 +16,12 @@
 			<div class="fixed-title">{{ fixedTitle }}</div>
 		</div>
 
-		<div class="shortcut"
-			@touchstart.stop.prevent="onShortcutTouchStart"
-			@touchmove.stop.prevent="onShortcutTouchMove"
-			@touchend.stop.prevent="onShortcutTouchEnd"
-		>
-			<ul>
+		<div class="shortcut">
+			<ul
+				@touchstart.stop.prevent="onShortcutTouchStart"
+				@touchmove.stop.prevent="onShortcutTouchMove"
+				@touchend.stop.prevent="onShortcutTouchEnd"
+			>
 				<li
 					v-for="(item, index) in shortcutList"
 					:key="index"
