@@ -5,9 +5,15 @@
 		</div>
 		<h1 class="title">{{ title }}</h1>
 		<div class="bg-image" :style="bgImageStyle" ref="bgRef">
-			<div class="filter"></div>
+			<div class="filter" :style="filterStyle"></div>
 		</div>
-		<scroll class="list" :style="scrollStyle" v-loading="loading">
+		<scroll
+			class="list"
+			:style="scrollStyle"
+			v-loading="loading"
+			:probe-type="3"
+      @scroll="onScroll"
+		>
 			<div class="song-list-wrapper">
 				<song-list :songs="songs"></song-list>
 			</div>
@@ -20,6 +26,7 @@ import { defineComponent, computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import Scroll from "@/components/base/scroll/scroll";
 import SongList from "@/components/base/songList/songList";
+const HEADER_HEIGHT = 40; // 顶部header高度
 
 export default defineComponent({
 	name: "MusicList",
@@ -53,16 +60,39 @@ export default defineComponent({
 	},
 	setup(props) {
 		const router = useRouter();
-    const bgRef = ref(null);
-    const imageHeight = ref(0);
+		const bgRef = ref(null);
+		const imageHeight = ref(0);
+    const scrollY = ref(0);
+    const maxTranslateY = ref(0);
 
-    onMounted(() => {
-      setScrollHeight();
-    })
+		onMounted(() => {
+			setScrollHeight();
+		});
 
 		const bgImageStyle = computed(() => {
+      let zIndex = 0;
+      let paddingTop = "70%";
+      let height = 0;
+      let scale = 1;
+      let translateZ = 0;
+
+      if(scrollY.value > maxTranslateY.value) {
+        zIndex = 10;
+        paddingTop = 0;
+        height = `${HEADER_HEIGHT}px`;
+        translateZ = 1;
+      }
+      // scroll向下滚动，图片伸缩
+      if (scrollY.value < 0) {
+        scale = 1 + Math.abs(scrollY.value / imageHeight.value);
+      }
+
 			return {
+        height,
+        paddingTop,
+        zIndex,
 				backgroundImage: `url(${props.pic})`,
+        transform: `scale(${scale})translateZ(${translateZ}px)`,
 			};
 		});
 		const scrollStyle = computed(() => {
@@ -70,22 +100,40 @@ export default defineComponent({
 				top: `${imageHeight.value}px`,
 			};
 		});
+    const filterStyle = computed(() => {
+      let blur = 0;
+      if(scrollY.value >= 0) {
+        blur = Math.min(maxTranslateY.value / imageHeight.value, scrollY.value / imageHeight.value) * 10;
+      }
 
-    // 返回
+      return {
+        backdropFilter: `blur(${blur}px)`,
+      }
+    })
+
+		// 返回
 		const handleGoBack = () => {
 			router.back();
 		};
-    // 设置滚动条top高度
-    const setScrollHeight = () => {
-      const h = bgRef.value && bgRef.value.clientHeight;
-      imageHeight.value = h;
+		// 设置滚动条top高度
+		const setScrollHeight = () => {
+			const h = bgRef.value && bgRef.value.clientHeight;
+			imageHeight.value = h;
+      // 最大滚动高度
+      maxTranslateY.value = h - HEADER_HEIGHT;
+		};
+    // scroll滚动事件
+    const onScroll = (pos) => {
+      scrollY.value = -pos.y;
     }
 
 		return {
-      bgRef,
+			bgRef,
 			handleGoBack,
 			bgImageStyle,
 			scrollStyle,
+      filterStyle,
+      onScroll,
 		};
 	},
 });
@@ -124,7 +172,6 @@ export default defineComponent({
 	.bg-image {
 		position: relative;
 		width: 100%;
-    padding-top: 70%;
 		transform-origin: top;
 		background-size: cover;
 		.play-btn-wrapper {
