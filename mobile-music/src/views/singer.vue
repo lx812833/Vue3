@@ -1,11 +1,13 @@
 <template>
 	<div class="singer" v-loading="!singers.length">
-		<index-list :data="singers"></index-list>
+		<index-list :data="singers" @select="getSelectSinger"></index-list>
+		<router-view :singer="selectedSinger"></router-view>
 	</div>
 </template>
 
 <script>
 import { defineComponent, onMounted, reactive, toRefs } from "vue";
+import { useRouter } from "vue-router";
 import { getSingerList } from "@/server/singer";
 import IndexList from "@/components/base/indexList/indexList";
 
@@ -15,8 +17,11 @@ export default defineComponent({
 		IndexList,
 	},
 	setup() {
+		// 路由实例
+		const router = useRouter();
 		let state = reactive({
 			singers: [],
+			selectedSinger: {}
 		});
 
 		onMounted(() => {
@@ -24,9 +29,17 @@ export default defineComponent({
 				state.singers = res.singers;
 			});
 		});
+		// 获取点击的歌手信息
+		const getSelectSinger = (val) => {
+			state.selectedSinger = val;
+			router.push({
+				path: `/singer/${val.mid}`
+			})
+		}
 
 		return {
 			...toRefs(state),
+			getSelectSinger
 		};
 	},
 });

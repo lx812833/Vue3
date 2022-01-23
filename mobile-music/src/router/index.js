@@ -8,22 +8,28 @@ const routes = [
   {
     path: "/recommend",
     name: "Recommend",
-    component: () => import(/* webpackChunkName: "Recommend" */ "../views/recommend.vue")
+    component: () => import("../views/recommend.vue")
   },
   {
     path: "/singer",
     name: "Singer",
-    component: () => import(/* webpackChunkName: "Singer" */ "../views/singer.vue")
+    component: () => import("../views/singer.vue"),
+    children: [
+      {
+        path: ":id",
+        component: () => import("../views/singerDetail.vue")
+      }
+    ]
   },
   {
     path: "/top-list",
     name: "TopList",
-    component: () => import(/* webpackChunkName: "TopList" */ "../views/topList.vue")
+    component: () => import("../views/topList.vue")
   },
   {
     path: "/search",
     name: "Search",
-    component: () => import(/* webpackChunkName: "TopList" */ "../views/search.vue")
+    component: () => import("../views/search.vue")
   },
 ]
 
