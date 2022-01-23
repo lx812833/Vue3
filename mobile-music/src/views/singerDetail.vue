@@ -1,28 +1,55 @@
 <template>
-	<div class="singer-detail">歌手详情页</div>
+	<div class="singer-detail">
+		<music-list
+			:songs="songs"
+			:pic="pic"
+			:title="title"
+			:loading="loading"
+		></music-list>
+	</div>
 </template>
 
 <script>
-import { defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted, reactive, toRefs, ref } from "vue";
 import { getSingerDetail } from "@/server/singer";
+import { processSongs } from "@/server/song";
+import MusicList from "@/components/base/musicList/musicList";
 
 export default defineComponent({
 	name: "SingerDetail",
-  props: {
-    singer: Object
-  },
-  setup(props) {
-    onMounted(() => {
-      // 歌手详情
-      getSingerDetail(props.singer).then(res => {
-        console.log("歌手歌曲", res);
-      })
-    })
+	components: {
+		MusicList,
+	},
+	props: {
+		singer: Object,
+	},
+	setup(props) {
+    const loading = ref(true);
+		const state = reactive({
+			songs: [], // 歌手歌曲
+		});
 
-    return {
+		const pic = computed(() => {
+			return props.singer && props.singer.pic;
+		});
+		const title = computed(() => {
+			return props.singer && props.singer.name;
+		});
 
-    }
-  }
+		onMounted(async () => {
+			// 歌手详情
+			const result = await getSingerDetail(props.singer);
+			state.songs = await processSongs(result.songs);
+      loading.value = false;
+		});
+
+		return {
+			...toRefs(state),
+			pic,
+			title,
+      loading,
+		};
+	},
 });
 </script>
 
