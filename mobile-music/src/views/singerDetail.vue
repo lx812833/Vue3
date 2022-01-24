@@ -11,9 +11,11 @@
 
 <script>
 import { computed, defineComponent, onMounted, reactive, toRefs, ref } from "vue";
+import { useRoute } from "vue-router";
 import { getSingerDetail } from "@/server/singer";
 import { processSongs } from "@/server/song";
 import MusicList from "@/components/base/musicList/musicList";
+import { SINGER_KEY } from "../assets/js/constant";
 
 export default defineComponent({
 	name: "SingerDetail",
@@ -24,21 +26,35 @@ export default defineComponent({
 		singer: Object,
 	},
 	setup(props) {
+		const route = useRoute();
     const loading = ref(true);
 		const state = reactive({
 			songs: [], // 歌手歌曲
 		});
 
+		// 通过缓存获取歌手详情
+		const cacheSinger = computed(() => {
+			let result = null;
+			if(props.singer && props.singer.mid) {
+				result = props.singer;
+			} else {
+				let cache = JSON.parse(sessionStorage.getItem(SINGER_KEY));
+				if(cache && cache.mid === route.params.id) {
+					result = cache;
+				}
+			}
+			return result;
+		})
 		const pic = computed(() => {
-			return props.singer && props.singer.pic;
+			return cacheSinger.value && cacheSinger.value.pic;
 		});
 		const title = computed(() => {
-			return props.singer && props.singer.name;
+			return cacheSinger.value && cacheSinger.value.name;
 		});
 
 		onMounted(async () => {
 			// 歌手详情
-			const result = await getSingerDetail(props.singer);
+			const result = await getSingerDetail(cacheSinger.value);
 			state.songs = await processSongs(result.songs);
       loading.value = false;
 		});

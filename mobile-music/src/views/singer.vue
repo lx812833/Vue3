@@ -10,6 +10,7 @@ import { defineComponent, onMounted, reactive, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { getSingerList } from "@/server/singer";
 import IndexList from "@/components/base/indexList/indexList";
+import { SINGER_KEY } from "@/assets/js/constant";
 
 export default defineComponent({
 	name: "Singer",
@@ -32,6 +33,7 @@ export default defineComponent({
 		// 获取点击的歌手信息
 		const getSelectSinger = (val) => {
 			state.selectedSinger = val;
+			sessionStorage.setItem(SINGER_KEY, JSON.stringify(val));
 			router.push({
 				path: `/singer/${val.mid}`
 			})
