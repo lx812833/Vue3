@@ -11,6 +11,7 @@
 			class="list"
 			:style="scrollStyle"
 			v-loading="loading"
+			v-no-result:[noResultText]="noResult"
 			:probe-type="3"
       @scroll="onScroll"
 		>
@@ -109,7 +110,10 @@ export default defineComponent({
       return {
         backdropFilter: `blur(${blur}px)`,
       }
-    })
+    });
+		const noResult = computed(() => {
+			return !props.loading && !props.songs.length;
+		})
 
 		// 返回
 		const handleGoBack = () => {
@@ -134,6 +138,7 @@ export default defineComponent({
 			scrollStyle,
       filterStyle,
       onScroll,
+			noResult
 		};
 	},
 });
