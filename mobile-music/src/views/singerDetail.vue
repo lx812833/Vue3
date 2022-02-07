@@ -14,7 +14,7 @@ import { computed, defineComponent, onMounted, reactive, toRefs, ref } from "vue
 import { useRoute } from "vue-router";
 import { getSingerDetail } from "@/server/singer";
 import { processSongs } from "@/server/song";
-import MusicList from "@/components/base/musicList/musicList";
+import MusicList from "@/components/musicList/musicList";
 import { SINGER_KEY } from "../assets/js/constant";
 
 export default defineComponent({
