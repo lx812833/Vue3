@@ -16,7 +16,7 @@
       @scroll="onScroll"
 		>
 			<div class="song-list-wrapper">
-				<song-list :songs="songs"></song-list>
+				<song-list :songs="songs" @select="selectPlayItem"></song-list>
 			</div>
 		</scroll>
 	</div>
@@ -25,6 +25,7 @@
 <script>
 import { defineComponent, computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import Scroll from "@/components/base/scroll/scroll";
 import SongList from "@/components/base/songList/songList";
 const HEADER_HEIGHT = 40; // 顶部header高度
@@ -60,7 +61,8 @@ export default defineComponent({
 		},
 	},
 	setup(props) {
-		const router = useRouter();
+		const router = useRouter(); // vue3中router使用方法
+		const store = useStore(); // vue3中vuex使用方法
 		const bgRef = ref(null);
 		const imageHeight = ref(0);
     const scrollY = ref(0);
@@ -129,7 +131,14 @@ export default defineComponent({
     // scroll滚动事件
     const onScroll = (pos) => {
       scrollY.value = -pos.y;
-    }
+    };
+		// 选择播放的歌曲
+		const selectPlayItem = ({ index }) => {
+			store.dispatch("selectPlay", {
+				list: props.songs,
+				index
+			})
+		};
 
 		return {
 			bgRef,
@@ -138,7 +147,8 @@ export default defineComponent({
 			scrollStyle,
       filterStyle,
       onScroll,
-			noResult
+			noResult,
+			selectPlayItem,
 		};
 	},
 });
