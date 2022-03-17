@@ -5,6 +5,12 @@
 		</div>
 		<h1 class="title">{{ title }}</h1>
 		<div class="bg-image" :style="bgImageStyle" ref="bgRef">
+			<div class="play-btn-wrapper" :style="playBtnStyle">
+				<div	v-show="songs.length > 0"	class="play-btn" @click="selectRandomPlay">
+					<i class="icon-play"></i>
+					<span class="text">随机播放全部</span>
+				</div>
+			</div>
 			<div class="filter" :style="filterStyle"></div>
 		</div>
 		<scroll
@@ -13,7 +19,7 @@
 			v-loading="loading"
 			v-no-result:[noResultText]="noResult"
 			:probe-type="3"
-      @scroll="onScroll"
+			@scroll="onScroll"
 		>
 			<div class="song-list-wrapper">
 				<song-list :songs="songs" @select="selectPlayItem"></song-list>
@@ -65,37 +71,37 @@ export default defineComponent({
 		const store = useStore(); // vue3中vuex使用方法
 		const bgRef = ref(null);
 		const imageHeight = ref(0);
-    const scrollY = ref(0);
-    const maxTranslateY = ref(0);
+		const scrollY = ref(0);
+		const maxTranslateY = ref(0);
 
 		onMounted(() => {
 			setScrollHeight();
 		});
 
 		const bgImageStyle = computed(() => {
-      let zIndex = 0;
-      let paddingTop = "70%";
-      let height = 0;
-      let scale = 1;
-      let translateZ = 0;
+			let zIndex = 0;
+			let paddingTop = "70%";
+			let height = 0;
+			let scale = 1;
+			let translateZ = 0;
 
-      if(scrollY.value > maxTranslateY.value) {
-        zIndex = 10;
-        paddingTop = 0;
-        height = `${HEADER_HEIGHT}px`;
-        translateZ = 1;
-      }
-      // scroll向下滚动，图片伸缩
-      if (scrollY.value < 0) {
-        scale = 1 + Math.abs(scrollY.value / imageHeight.value);
-      }
+			if(scrollY.value > maxTranslateY.value) {
+				zIndex = 10;
+				paddingTop = 0;
+				height = `${HEADER_HEIGHT}px`;
+				translateZ = 1;
+			}
+			// scroll向下滚动，图片伸缩
+			if (scrollY.value < 0) {
+				scale = 1 + Math.abs(scrollY.value / imageHeight.value);
+			}
 
 			return {
-        height,
-        paddingTop,
-        zIndex,
+				height,
+				paddingTop,
+				zIndex,
 				backgroundImage: `url(${props.pic})`,
-        transform: `scale(${scale})translateZ(${translateZ}px)`,
+				transform: `scale(${scale})translateZ(${translateZ}px)`,
 			};
 		});
 		const scrollStyle = computed(() => {
@@ -103,19 +109,28 @@ export default defineComponent({
 				top: `${imageHeight.value}px`,
 			};
 		});
-    const filterStyle = computed(() => {
-      let blur = 0;
+		const filterStyle = computed(() => {
+			let blur = 0;
       if(scrollY.value >= 0) {
         blur = Math.min(maxTranslateY.value / imageHeight.value, scrollY.value / imageHeight.value) * 10;
-      }
+			}
 
-      return {
-        backdropFilter: `blur(${blur}px)`,
-      }
-    });
+			return {
+				backdropFilter: `blur(${blur}px)`,
+			};
+		});
+		const playBtnStyle = computed(() => {
+			let display = "";
+			if (scrollY.value >= maxTranslateY.value) {
+				display = "none";
+			}
+			return {
+				display,
+			};
+		});
 		const noResult = computed(() => {
 			return !props.loading && !props.songs.length;
-		})
+		});
 
 		// 返回
 		const handleGoBack = () => {
@@ -125,19 +140,25 @@ export default defineComponent({
 		const setScrollHeight = () => {
 			const h = bgRef.value && bgRef.value.clientHeight;
 			imageHeight.value = h;
-      // 最大滚动高度
-      maxTranslateY.value = h - HEADER_HEIGHT;
+			// 最大滚动高度
+			maxTranslateY.value = h - HEADER_HEIGHT;
 		};
-    // scroll滚动事件
-    const onScroll = (pos) => {
-      scrollY.value = -pos.y;
-    };
+		// scroll滚动事件
+		const onScroll = (pos) => {
+			scrollY.value = -pos.y;
+		};
 		// 选择播放的歌曲
 		const selectPlayItem = ({ index }) => {
 			store.dispatch("selectPlay", {
 				list: props.songs,
-				index
-			})
+				index,
+			});
+		};
+		// 选择随机播放歌曲
+		const selectRandomPlay = () => {
+			store.dispatch("randomPlay", {
+				list: props.songs,
+			});
 		};
 
 		return {
@@ -145,10 +166,12 @@ export default defineComponent({
 			handleGoBack,
 			bgImageStyle,
 			scrollStyle,
-      filterStyle,
-      onScroll,
+			filterStyle,
+			playBtnStyle,
+			onScroll,
 			noResult,
 			selectPlayItem,
+			selectRandomPlay,
 		};
 	},
 });
