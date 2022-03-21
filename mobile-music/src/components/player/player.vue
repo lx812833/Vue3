@@ -44,15 +44,17 @@
 						<i @click="handleNext" class="icon-next"></i>
 					</div>
 					<div class="icon i-right">
-						<i
-							@click="toggleFavorite(currentSong)"
-							:class="getFavoriteIcon(currentSong)"
-						></i>
+						<i @click="toggleFavorite(currentSong)" :class="getFavoriteIcon(currentSong)"></i>
 					</div>
 				</div>
 			</div>
 		</div>
-		<audio ref="audioRef" @pause="audioPause"></audio>
+		<audio
+			ref="audioRef"
+			@pause="audioPause"
+			@canplay="audioReady"
+			@error="audioError"
+		></audio>
 	</div>
 </template>
 
@@ -65,6 +67,7 @@ export default defineComponent({
 	setup() {
 		// data
 		const audioRef = ref(null);
+		const songReady = ref(false);
 
 		// vuex
 		const store = useStore();
@@ -76,17 +79,24 @@ export default defineComponent({
 		});
 		const currentIndex = computed(() => store.state.currentIndex);
 		const playlist = computed(() => store.state.playlist);
+		const disableCls = computed(() => {
+			return songReady.value ? "" : "disable";
+		});
 
 		// watch
 		watch(currentSong, (newSong) => {
 			if (!newSong.id || !newSong.url) {
 				return;
 			}
+			songReady.value = false;
 			const audioEl = audioRef.value;
 			audioEl.src = newSong.url;
 			audioEl.play();
 		});
 		watch(playing, (newPlaying) => {
+			if (!songReady.value) {
+				return;
+			}
 			const audioEl = audioRef.value;
 			newPlaying ? audioEl.play() : audioEl.pause();
 		});
@@ -97,12 +107,15 @@ export default defineComponent({
 		};
 		// 切换播放状态
 		const handleTogglePlay = () => {
+			if (!songReady.value) {
+				return;
+			}
 			store.commit("setPlayingState", !playing.value);
 		};
 		// 上一个
 		const handlePrev = () => {
 			let list = playlist.value;
-			if (!list.length) {
+			if (!songReady.value || !list.length) {
 				return;
 			}
 			if (list.length === 1) {
@@ -121,7 +134,7 @@ export default defineComponent({
 		// 下一个
 		const handleNext = () => {
 			let list = playlist.value;
-			if (!list.length) {
+			if (!songReady.value || !list.length) {
 				return;
 			}
 			if (list.length === 1) {
@@ -141,6 +154,17 @@ export default defineComponent({
 		const audioPause = () => {
 			store.commit("setPlayingState", false);
 		};
+		// 播放器准备好播放
+		const audioReady = () => {
+			if (songReady.value) {
+				return;
+			}
+			songReady.value = true;
+		};
+		// 播放器报错
+		const audioError = () => {
+			songReady.value = true;
+		};
 		// 循环播放
 		const loopPlayer = () => {
 			const audioEl = audioRef.value;
@@ -153,9 +177,12 @@ export default defineComponent({
 			fullScreen,
 			currentSong,
 			playIcon,
+			disableCls,
 			goBack,
-			handleTogglePlay,
 			audioPause,
+			audioReady,
+			audioError,
+			handleTogglePlay,
 			handlePrev,
 			handleNext,
 		};
