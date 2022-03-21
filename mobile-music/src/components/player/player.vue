@@ -11,8 +11,51 @@
 				<h1 class="title">{{ currentSong.name }}</h1>
 				<h1 class="subtitle">{{ currentSong.singer }}</h1>
 			</div>
+			<div class="bottom">
+				<!-- <div class="dot-wrapper">
+					<span class="dot" :class="{ active: currentShow === 'cd' }"></span>
+					<span class="dot" :class="{ active: currentShow === 'lyric' }"></span>
+				</div>
+				<div class="progress-wrapper">
+					<span class="time time-l">{{ formatTime(currentTime) }}</span>
+					<div class="progress-bar-wrapper">
+						<progress-bar
+							ref="barRef"
+							:progress="progress"
+							@progress-changing="onProgressChanging"
+							@progress-changed="onProgressChanged"
+						></progress-bar>
+					</div>
+					<span class="time time-r">{{
+						formatTime(currentSong.duration)
+					}}</span>
+				</div> -->
+				<div class="operators">
+					<div class="icon i-left">
+						<i @click="changeMode" :class="modeIcon"></i>
+					</div>
+					<div class="icon i-left" :class="disableCls">
+						<i @click="prev" class="icon-prev"></i>
+					</div>
+					<div class="icon i-center" :class="disableCls">
+						<i @click="handleTogglePlay" :class="playIcon"></i>
+					</div>
+					<div class="icon i-right" :class="disableCls">
+						<i @click="next" class="icon-next"></i>
+					</div>
+					<div class="icon i-right">
+						<i
+							@click="toggleFavorite(currentSong)"
+							:class="getFavoriteIcon(currentSong)"
+						></i>
+					</div>
+				</div>
+			</div>
 		</div>
-		<audio ref="audioRef"></audio>
+		<audio 
+			ref="audioRef"
+			@pause="audioPause"
+		></audio>
 	</div>
 </template>
 
@@ -30,6 +73,10 @@ export default defineComponent({
 		const store = useStore();
 		const fullScreen = computed(() => store.state.fullScreen);
 		const currentSong = computed(() => store.getters.currentSong);
+		const playing = computed(() => store.state.playing);
+		const playIcon = computed(() => {
+			return playing.value ? "icon-pause" : "icon-play";
+		}) 
 
 		// watch
 		watch(currentSong, (newSong) => {
@@ -40,17 +87,32 @@ export default defineComponent({
 			audioEl.src = newSong.url;
 			audioEl.play();
 		});
+		watch(playing, (newPlaying) => {
+			const audioEl = audioRef.value;
+			newPlaying ? audioEl.play() : audioEl.pause();
+		})
 
 		// methods
 		const goBack = () => {
 			store.commit("setFullScreen", false);
 		};
+		// 切换播放状态
+		const handleTogglePlay = () => {
+			store.commit("setPlayingState", !playing.value);
+		};
+		// 播放器停止播放事件
+		const audioPause = () => {
+			store.commit("setPlayingState", false);
+		}
 
 		return {
 			audioRef,
 			fullScreen,
 			currentSong,
-      goBack,
+			playIcon,
+			goBack,
+			handleTogglePlay,
+			audioPause,
 		};
 	},
 });
