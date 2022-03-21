@@ -35,13 +35,13 @@
 						<i @click="changeMode" :class="modeIcon"></i>
 					</div>
 					<div class="icon i-left" :class="disableCls">
-						<i @click="prev" class="icon-prev"></i>
+						<i @click="handlePrev" class="icon-prev"></i>
 					</div>
 					<div class="icon i-center" :class="disableCls">
 						<i @click="handleTogglePlay" :class="playIcon"></i>
 					</div>
 					<div class="icon i-right" :class="disableCls">
-						<i @click="next" class="icon-next"></i>
+						<i @click="handleNext" class="icon-next"></i>
 					</div>
 					<div class="icon i-right">
 						<i
@@ -52,10 +52,7 @@
 				</div>
 			</div>
 		</div>
-		<audio 
-			ref="audioRef"
-			@pause="audioPause"
-		></audio>
+		<audio ref="audioRef" @pause="audioPause"></audio>
 	</div>
 </template>
 
@@ -76,7 +73,9 @@ export default defineComponent({
 		const playing = computed(() => store.state.playing);
 		const playIcon = computed(() => {
 			return playing.value ? "icon-pause" : "icon-play";
-		}) 
+		});
+		const currentIndex = computed(() => store.state.currentIndex);
+		const playlist = computed(() => store.state.playlist);
 
 		// watch
 		watch(currentSong, (newSong) => {
@@ -90,7 +89,7 @@ export default defineComponent({
 		watch(playing, (newPlaying) => {
 			const audioEl = audioRef.value;
 			newPlaying ? audioEl.play() : audioEl.pause();
-		})
+		});
 
 		// methods
 		const goBack = () => {
@@ -100,10 +99,54 @@ export default defineComponent({
 		const handleTogglePlay = () => {
 			store.commit("setPlayingState", !playing.value);
 		};
+		// 上一个
+		const handlePrev = () => {
+			let list = playlist.value;
+			if (!list.length) {
+				return;
+			}
+			if (list.length === 1) {
+				loopPlayer();
+			} else {
+				let index = currentIndex.value - 1;
+				if (index === -1) {
+					index = list.length - 1;
+				}
+				store.commit("setCurrentIndex", index);
+				if (!playing.value) {
+					store.commit("setPlayingState", true);
+				}
+			}
+		};
+		// 下一个
+		const handleNext = () => {
+			let list = playlist.value;
+			if (!list.length) {
+				return;
+			}
+			if (list.length === 1) {
+				loopPlayer();
+			} else {
+				let index = currentIndex.value + 1;
+				if (index === playlist.value.length) {
+					index = 0;
+				}
+				store.commit("setCurrentIndex", index);
+				if (!playing.value) {
+					store.commit("setPlayingState", true);
+				}
+			}
+		};
 		// 播放器停止播放事件
 		const audioPause = () => {
 			store.commit("setPlayingState", false);
-		}
+		};
+		// 循环播放
+		const loopPlayer = () => {
+			const audioEl = audioRef.value;
+			audioEl.currentTime = 0;
+			audioEl.play();
+		};
 
 		return {
 			audioRef,
@@ -113,6 +156,8 @@ export default defineComponent({
 			goBack,
 			handleTogglePlay,
 			audioPause,
+			handlePrev,
+			handleNext,
 		};
 	},
 });
