@@ -43,9 +43,9 @@
 					<div class="icon i-right" :class="disableCls">
 						<i @click="handleNext" class="icon-next"></i>
 					</div>
-					<div class="icon i-right">
+					<!-- <div class="icon i-right">
 						<i @click="toggleFavorite(currentSong)" :class="getFavoriteIcon(currentSong)"></i>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</div>
@@ -61,6 +61,7 @@
 <script>
 import { useStore } from "vuex";
 import { defineComponent, computed, watch, ref } from "vue";
+import { useMode } from "./useMode";
 
 export default defineComponent({
 	name: "Player",
@@ -82,6 +83,9 @@ export default defineComponent({
 		const disableCls = computed(() => {
 			return songReady.value ? "" : "disable";
 		});
+
+		// hooks
+		const { modeIcon, changeMode } = useMode();
 
 		// watch
 		watch(currentSong, (newSong) => {
@@ -185,6 +189,8 @@ export default defineComponent({
 			handleTogglePlay,
 			handlePrev,
 			handleNext,
+			modeIcon,
+			changeMode,
 		};
 	},
 });
