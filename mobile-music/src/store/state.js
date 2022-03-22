@@ -7,4 +7,5 @@ export const state = {
   playMode: PLAY_MODE.sequence, // 播放模式 
   currentIndex: 0,
   fullScreen: false, // 是否全屏
+  favoriteList: [], // 收藏列表
 }

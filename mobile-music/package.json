@@ -13,6 +13,7 @@
     "@better-scroll/pull-up": "^2.4.2",
     "@better-scroll/slide": "^2.4.2",
     "axios": "^0.24.0",
+    "good-storage": "^1.1.1",
     "js-base64": "^3.7.2",
     "pinyin": "^2.10.2",
     "vue": "^3.0.0",
