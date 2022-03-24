@@ -21,3 +21,23 @@ export const save = (item, key, compare, maxLen) => {
   storage.set(key, items);
   return items;
 }
+
+// 删除数据
+const deleteFromArray = (arr, compare) => {
+  const index = arr.findIndex(compare);
+  if (index > -1) {
+    arr.splice(index, 1);
+  }
+}
+
+export const remove = (key, compare) => {
+  const items = storage.get(key, []);
+  deleteFromArray(items, compare);
+  storage.set(key, items);
+  return items;
+}
+
+// 加载数据
+export const load = (key) => {
+  return storage.get(key, []);
+}

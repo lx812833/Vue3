@@ -1,6 +1,6 @@
 import { useStore } from "vuex";
 import { computed } from "vue";
-import { save } from "@/assets/js/array-store";
+import { save, remove } from "@/assets/js/array-store";
 import { FAVORITE_KEY } from "@/assets/js/constant";
 
 export const useFavorite = () => {
@@ -13,17 +13,21 @@ export const useFavorite = () => {
   }
 
   const toggleFavorite = (song) => {
+    /**
+     * 
+     * arr.findIndex(callback[, thisArg])
+     * findIndex接收一个回调函数，函数第一个参数为当前元素，item 
+     */
+    const compare = (item) => {
+      return item.id === song.id;
+    }
     let list;
     if (isFavorite(song)) {
-      // list = 
+      list = remove(FAVORITE_KEY, compare);
     } else {
       list = save(song, FAVORITE_KEY, compare, maxLen);
     }
     store.commit("setFavoriteList", list);
-
-    function compare(item) {
-      return item.id === song.id;
-    }
   }
 
   const isFavorite = (song) => {
