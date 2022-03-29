@@ -30,6 +30,16 @@
 						formatTime(currentSong.duration)
 					}}</span>
 				</div> -->
+				<div class="progress-wrapper" ref="wrapperRef">
+					<span class="time time-l">{{ formatTime(currentTime) }}</span>
+					<div class="progress-bar-wrapper">
+						<progress-bar
+							ref="barRef"
+							:progress="progress"
+						></progress-bar>
+					</div>
+				</div>
+
 				<div class="operators">
 					<div class="icon i-left">
 						<i @click="changeMode" :class="modeIcon"></i>
@@ -54,6 +64,7 @@
 			@pause="audioPause"
 			@canplay="audioReady"
 			@error="audioError"
+			@timeupdate="audioUpdateTime"
 		></audio>
 	</div>
 </template>
@@ -63,15 +74,22 @@ import { useStore } from "vuex";
 import { defineComponent, computed, watch, ref } from "vue";
 import { useMode } from "./useMode";
 import { useFavorite } from "./useFavorite";
+import { formatTime } from "@/assets/js/util";
+import progressBar from "./progressBar.vue";
 
 export default defineComponent({
 	name: "Player",
+	components: {
+		progressBar,
+	},
 	setup() {
 		// data
 		const audioRef = ref(null);
+		const wrapperRef = ref(null);
 		const songReady = ref(false);
+		const currentTime = ref(0);
 
-		// vuex
+		// computed
 		const store = useStore();
 		const fullScreen = computed(() => store.state.fullScreen);
 		const currentSong = computed(() => store.getters.currentSong);
@@ -84,6 +102,10 @@ export default defineComponent({
 		const disableCls = computed(() => {
 			return songReady.value ? "" : "disable";
 		});
+		const progress = computed(() => {
+			return currentTime.value / currentSong.value.duration;
+		});
+		// 播放器滚动条容器宽度
 
 		// hooks
 		const { modeIcon, changeMode } = useMode();
@@ -94,6 +116,7 @@ export default defineComponent({
 			if (!newSong.id || !newSong.url) {
 				return;
 			}
+			currentTime.value = 0;
 			songReady.value = false;
 			const audioEl = audioRef.value;
 			audioEl.src = newSong.url;
@@ -177,17 +200,25 @@ export default defineComponent({
 			audioEl.currentTime = 0;
 			audioEl.play();
 		};
+		// 播放器播放进度
+		const audioUpdateTime = (e) => {
+			currentTime.value = e.target.currentTime;
+		}
 
 		return {
 			audioRef,
+			wrapperRef,
 			fullScreen,
 			currentSong,
+			currentTime,
 			playIcon,
 			disableCls,
+			progress,
 			goBack,
 			audioPause,
 			audioReady,
 			audioError,
+			audioUpdateTime,
 			handleTogglePlay,
 			handlePrev,
 			handleNext,
@@ -195,6 +226,7 @@ export default defineComponent({
 			changeMode,
 			toggleFavorite,
 			getFavoriteIcon,
+			formatTime,
 		};
 	},
 });

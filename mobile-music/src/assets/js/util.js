@@ -20,3 +20,10 @@ const swap = (arr, i, j) => {
   arr[i] = arr[j];
   arr[j] = t;
 }
+
+export const formatTime = (interval = 0) => {
+  interval = interval | 0; // 取整
+  const minute = ((interval / 60 | 0) + "").padStart(2, "0"); // 字符串补全
+  const second = (interval % 60 + "").padStart(2, "0");
+  return `${minute}:${second}`;
+}
