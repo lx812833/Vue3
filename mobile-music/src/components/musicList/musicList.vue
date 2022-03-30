@@ -6,7 +6,7 @@
 		<h1 class="title">{{ title }}</h1>
 		<div class="bg-image" :style="bgImageStyle" ref="bgRef">
 			<div class="play-btn-wrapper" :style="playBtnStyle">
-				<div	v-show="songs.length > 0"	class="play-btn" @click="selectRandomPlay">
+				<div v-show="songs.length > 0" class="play-btn" @click="selectRandomPlay">
 					<i class="icon-play"></i>
 					<span class="text">随机播放全部</span>
 				</div>

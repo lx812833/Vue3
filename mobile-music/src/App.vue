@@ -9,7 +9,7 @@
 import { defineComponent } from "vue";
 import Header from "@/components/header/header.vue";
 import Tab from "@/components/tab/tab.vue";
-import Player from "./components/player/player.vue";
+import Player from "@/components/player/player.vue";
 
 export default defineComponent({
 	name: "App",
