@@ -1,5 +1,5 @@
 <template>
-	<div class="progress-bar">
+	<div class="progress-bar" ref="progressRef">
 		<div class="bar-inner">
 			<div class="progress" ref="progress" :style="progressStyle"></div>
 			<div class="progress-btn-wrapper" :style="btnStyle">
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, computed } from "vue";
+import { defineComponent, ref, watch, computed, onMounted, nextTick} from "vue";
 const progressBtnWidth = 16;
 
 export default defineComponent({
@@ -24,11 +24,12 @@ export default defineComponent({
 	setup(props) {
 		// data
 		const offset = ref(0);
+		const progressWidth = ref(0);
 		const progressRef = ref(null);
 
 		// watch
 		watch(() => props.progress, (newVal) => {
-      const barWidth = 272 - progressBtnWidth;
+      const barWidth = progressWidth.value - progressBtnWidth;
       offset.value = barWidth * newVal;
     });
 
@@ -40,9 +41,16 @@ export default defineComponent({
 			return `transform: translate3d(${offset.value}px, 0, 0)`;
 		});
 
+		// mounted
+		onMounted(async () => {
+			await nextTick();
+			progressWidth.value = progressRef.value.clientWidth;
+		})
+
 		return {
 			btnStyle,
 			progressRef,
+			progressWidth,
 			progressStyle,
 		};
 	},

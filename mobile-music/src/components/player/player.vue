@@ -1,6 +1,6 @@
 <template>
   <div class="player">
-    <div class="normal-player" v-show="fullScreen">
+    <div class="normal-player" v-if="fullScreen">
       <div class="background">
         <img :src="currentSong.pic" alt="" />
       </div>
@@ -30,7 +30,7 @@
 						formatTime(currentSong.duration)
 					}}</span>
 				</div> -->
-        <div class="progress-wrapper" ref="wrapperRef">
+        <div class="progress-wrapper">
           <span class="time time-l">{{ formatTime(currentTime) }}</span>
           <div class="progress-bar-wrapper">
             <progress-bar ref="barRef" :progress="progress"></progress-bar>
@@ -76,8 +76,6 @@ import {
   computed,
   watch,
   ref,
-  onMounted,
-	nextTick
 } from "vue";
 import { useMode } from "./useMode";
 import { useFavorite } from "./useFavorite";
@@ -92,7 +90,6 @@ export default defineComponent({
   setup() {
     // data
     const audioRef = ref(null);
-    const wrapperRef = ref(null);
     const songReady = ref(false);
     const currentTime = ref(0);
 
@@ -111,14 +108,6 @@ export default defineComponent({
     });
     const progress = computed(() => {
       return currentTime.value / currentSong.value.duration;
-    });
-
-    // Mounted
-    onMounted(async () => {
-			await nextTick();
-      // 播放器滚动条容器宽度
-			const width = wrapperRef.value.clientWidth;
-      console.log("width", width);
     });
 
     // hooks
@@ -221,7 +210,6 @@ export default defineComponent({
 
     return {
       audioRef,
-      wrapperRef,
       fullScreen,
       currentSong,
       currentTime,
