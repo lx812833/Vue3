@@ -1,5 +1,5 @@
 <template>
-	<div class="progress-bar" ref="progressBarRef">
+	<div class="progress-bar" ref="progressBarRef" @click="onClickBar">
 		<div class="bar-inner">
 			<div class="progress" ref="progressRef" :style="progressStyle"></div>
 			<div class="progress-btn-wrapper"
@@ -20,13 +20,14 @@ const progressBtnWidth = 16;
 
 export default defineComponent({
 	name: "ProgressBar",
+	emits: ["progress-changing", "progress-changed"],
 	props: {
 		progress: {
 			type: Number,
 			default: 0,
 		},
 	},
-	setup(props) {
+	setup(props, { emit }) {
 		// data
 		const offset = ref(0);
 		const progressRef = ref(null);
@@ -58,12 +59,23 @@ export default defineComponent({
 			const tempWidth = touch.beginWidth + delta;
 			const progress = Math.min(1, Math.max(tempWidth / progressWidth.value, 0));
 			offset.value = progressWidth.value * progress;
+			emit("progress-changing", progress);
 		}
 		const onTouchEnd = () => {
 			const barWidth = progressWidth.value - progressBtnWidth;
 			const progress = Math.min(progressRef.value.clientWidth / barWidth, 1);
-
-			console.log("end", progress);
+			emit("progress-changed", progress);
+		}
+		const onClickBar = (e) => {
+			/**
+			 * getBoundingClientRect
+			 * 返回元素的大小及其相对于视口的位置
+			 */
+			const rect = progressBarRef.value.getBoundingClientRect();
+			const offsetWidth = e.pageX - rect.left;
+			const barWidth = progressWidth.value - progressBtnWidth;
+			const progress = offsetWidth / barWidth;
+			emit("progress-changed", progress);
 		}
 
 		// mounted
@@ -82,6 +94,7 @@ export default defineComponent({
 			onTouchStart,
 			onTouchMove,
 			onTouchEnd,
+			onClickBar,
 		};
 	},
 });

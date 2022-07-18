@@ -16,6 +16,7 @@
 					<span class="dot" :class="{ active: currentShow === 'cd' }"></span>
 					<span class="dot" :class="{ active: currentShow === 'lyric' }"></span>
 				</div>
+        -->
 				<div class="progress-wrapper">
 					<span class="time time-l">{{ formatTime(currentTime) }}</span>
 					<div class="progress-bar-wrapper">
@@ -26,17 +27,8 @@
 							@progress-changed="onProgressChanged"
 						></progress-bar>
 					</div>
-					<span class="time time-r">{{
-						formatTime(currentSong.duration)
-					}}</span>
-				</div> -->
-        <div class="progress-wrapper">
-          <span class="time time-l">{{ formatTime(currentTime) }}</span>
-          <div class="progress-bar-wrapper">
-            <progress-bar ref="barRef" :progress="progress"></progress-bar>
-          </div>
-        </div>
-
+					<span class="time time-r">{{ formatTime(currentSong.duration) }}</span>
+				</div>
         <div class="operators">
           <div class="icon i-left">
             <i @click="changeMode" :class="modeIcon"></i>
@@ -65,6 +57,7 @@
       @canplay="audioReady"
       @error="audioError"
       @timeupdate="audioUpdateTime"
+      @ended="audioEnded"
     ></audio>
   </div>
 </template>
@@ -81,6 +74,7 @@ import { useMode } from "./useMode";
 import { useFavorite } from "./useFavorite";
 import { formatTime } from "@/assets/js/util";
 import progressBar from "./progressBar.vue";
+import { PLAY_MODE } from "@/assets/js/constant";
 
 export default defineComponent({
   name: "Player",
@@ -92,6 +86,7 @@ export default defineComponent({
     const audioRef = ref(null);
     const songReady = ref(false);
     const currentTime = ref(0);
+    let progressChanging = false;
 
     // computed
     const store = useStore();
@@ -109,6 +104,7 @@ export default defineComponent({
     const progress = computed(() => {
       return currentTime.value / currentSong.value.duration;
     });
+    const playMode = computed(() => store.state.playMode); // 播放状态
 
     // hooks
     const { modeIcon, changeMode } = useMode();
@@ -197,16 +193,41 @@ export default defineComponent({
     const audioError = () => {
       songReady.value = true;
     };
+    // 播放器结束当前播放
+		const audioEnded = () => {
+			currentTime.value = 0;
+			if (playMode.value === PLAY_MODE.loop) {
+				loopPlayer();
+			} else {
+				handleNext();
+			}
+		};
     // 循环播放
     const loopPlayer = () => {
       const audioEl = audioRef.value;
       audioEl.currentTime = 0;
       audioEl.play();
+			store.commit("setPlayingState", true);
     };
-    // 播放器播放进度
-    const audioUpdateTime = (e) => {
-      currentTime.value = e.target.currentTime;
-    };
+		// 播放器播放进度
+		const audioUpdateTime = (e) => {
+			if (!progressChanging) {
+				currentTime.value = e.target.currentTime;
+			}
+		};
+		// 滑动进度条中
+		const onProgressChanging = (progress) => {
+      progressChanging = true;
+			currentTime.value = currentSong.value.duration * progress;
+		};
+		// 滑动进度条结束
+		const onProgressChanged = (progress) => {
+      progressChanging = false;
+			audioRef.value.currentTime = currentTime.value = currentSong.value.duration * progress;
+			if (!playing.value) {
+				store.commit("setPlayingState", true);
+			}
+		};
 
     return {
       audioRef,
@@ -220,6 +241,7 @@ export default defineComponent({
       audioPause,
       audioReady,
       audioError,
+      audioEnded,
       audioUpdateTime,
       handleTogglePlay,
       handlePrev,
@@ -229,6 +251,8 @@ export default defineComponent({
       toggleFavorite,
       getFavoriteIcon,
       formatTime,
+      onProgressChanging,
+      onProgressChanged,
     };
   },
 });
