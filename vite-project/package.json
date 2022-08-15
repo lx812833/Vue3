@@ -1,0 +1,24 @@
+{
+  "name": "vite-project",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "serve": "vite",
+    "build": "vite build --mode development",
+    "build:prod": "vite build --mode production",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vant": "^3.5.4",
+    "vue": "^3.2.37"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^3.0.3",
+    "dart-sass": "^1.25.0",
+    "postcss-px-to-viewport": "^1.1.1",
+    "sass": "^1.54.4",
+    "unplugin-vue-components": "^0.22.4",
+    "vite": "^3.0.7"
+  }
+}
