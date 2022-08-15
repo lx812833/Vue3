@@ -1,6 +1,6 @@
 <template>
   <div class="player">
-    <div class="normal-player" v-show="fullScreen">
+    <div class="normal-player" v-if="fullScreen">
       <div class="background">
         <img :src="currentSong.pic" alt="" />
       </div>
@@ -11,11 +11,53 @@
         <h1 class="title">{{ currentSong.name }}</h1>
         <h1 class="subtitle">{{ currentSong.singer }}</h1>
       </div>
+      
+      <div
+				class="middle"
+				@touchstart.prevent="onMiddleTouchStart"
+				@touchmove.prevent="onMiddleTouchMove"
+				@touchend.prevent="onMiddleTouchEnd"
+			>
+				<div class="middle-l" :style="middleLStyle">
+					<div ref="cdWrapperRef" class="cd-wrapper">
+						<div ref="cdRef" class="cd">
+							<img
+								ref="cdImageRef"
+								class="image playing"
+								:class="cdCls"
+								:src="currentSong.pic"
+							/>
+						</div>
+					</div>
+					<div class="playing-lyric-wrapper">
+						<div class="playing-lyric">{{ playingLyric }}</div>
+					</div>
+				</div>
+				<scroll class="middle-r" ref="lyricScrollRef" :style="middleRStyle">
+					<div class="lyric-wrapper">
+						<div v-if="currentLyric" ref="lyricListRef">
+							<p
+								class="text"
+								:class="{ current: currentLineNum === index }"
+								v-for="(line, index) in currentLyric.lines"
+								:key="line.num"
+							>
+								{{ line.txt }}
+							</p>
+						</div>
+						<div class="pure-music" v-show="pureMusicLyric">
+							<p>{{ pureMusicLyric }}</p>
+						</div>
+					</div>
+				</scroll>
+			</div>
+
       <div class="bottom">
         <!-- <div class="dot-wrapper">
 					<span class="dot" :class="{ active: currentShow === 'cd' }"></span>
 					<span class="dot" :class="{ active: currentShow === 'lyric' }"></span>
 				</div>
+        -->
 				<div class="progress-wrapper">
 					<span class="time time-l">{{ formatTime(currentTime) }}</span>
 					<div class="progress-bar-wrapper">
@@ -26,17 +68,8 @@
 							@progress-changed="onProgressChanged"
 						></progress-bar>
 					</div>
-					<span class="time time-r">{{
-						formatTime(currentSong.duration)
-					}}</span>
-				</div> -->
-        <div class="progress-wrapper" ref="wrapperRef">
-          <span class="time time-l">{{ formatTime(currentTime) }}</span>
-          <div class="progress-bar-wrapper">
-            <progress-bar ref="barRef" :progress="progress"></progress-bar>
-          </div>
-        </div>
-
+					<span class="time time-r">{{ formatTime(currentSong.duration) }}</span>
+				</div>
         <div class="operators">
           <div class="icon i-left">
             <i @click="changeMode" :class="modeIcon"></i>
@@ -65,6 +98,7 @@
       @canplay="audioReady"
       @error="audioError"
       @timeupdate="audioUpdateTime"
+      @ended="audioEnded"
     ></audio>
   </div>
 </template>
@@ -76,13 +110,14 @@ import {
   computed,
   watch,
   ref,
-  onMounted,
-	nextTick
 } from "vue";
 import { useMode } from "./useMode";
 import { useFavorite } from "./useFavorite";
+import { useCD } from "./useCD";
+import { useLyric } from "./useLyric";
 import { formatTime } from "@/assets/js/util";
 import progressBar from "./progressBar.vue";
+import { PLAY_MODE } from "@/assets/js/constant";
 
 export default defineComponent({
   name: "Player",
@@ -92,9 +127,9 @@ export default defineComponent({
   setup() {
     // data
     const audioRef = ref(null);
-    const wrapperRef = ref(null);
     const songReady = ref(false);
     const currentTime = ref(0);
+    let progressChanging = false;
 
     // computed
     const store = useStore();
@@ -112,18 +147,13 @@ export default defineComponent({
     const progress = computed(() => {
       return currentTime.value / currentSong.value.duration;
     });
-
-    // Mounted
-    onMounted(async () => {
-			await nextTick();
-      // 播放器滚动条容器宽度
-			const width = wrapperRef.value.clientWidth;
-      console.log("width", width);
-    });
+    const playMode = computed(() => store.state.playMode); // 播放状态
 
     // hooks
     const { modeIcon, changeMode } = useMode();
     const { getFavoriteIcon, toggleFavorite } = useFavorite();
+    const { cdCls, cdRef, cdImageRef } = useCD();
+    useLyric();
 
     // watch
     watch(currentSong, (newSong) => {
@@ -208,20 +238,65 @@ export default defineComponent({
     const audioError = () => {
       songReady.value = true;
     };
+    // 播放器结束当前播放
+		const audioEnded = () => {
+			currentTime.value = 0;
+			if (playMode.value === PLAY_MODE.loop) {
+				loopPlayer();
+			} else {
+				handleNext();
+			}
+		};
     // 循环播放
     const loopPlayer = () => {
       const audioEl = audioRef.value;
       audioEl.currentTime = 0;
       audioEl.play();
+			store.commit("setPlayingState", true);
     };
-    // 播放器播放进度
-    const audioUpdateTime = (e) => {
-      currentTime.value = e.target.currentTime;
+		// 播放器播放进度
+		const audioUpdateTime = (e) => {
+			if (!progressChanging) {
+				currentTime.value = e.target.currentTime;
+			}
+		};
+		// 滑动进度条中
+		const onProgressChanging = (progress) => {
+      progressChanging = true;
+			currentTime.value = currentSong.value.duration * progress;
+		};
+		// 滑动进度条结束
+		const onProgressChanged = (progress) => {
+      progressChanging = false;
+			audioRef.value.currentTime = currentTime.value = currentSong.value.duration * progress;
+			if (!playing.value) {
+				store.commit("setPlayingState", true);
+			}
+		};
+
+    const onMiddleTouchStart = () => {
+
     };
+
+    const onMiddleTouchMove = () => {
+
+    };
+
+    const onMiddleTouchEnd = () => {
+
+    };
+
+    const middleLStyle = ref("");
+    const cdWrapperRef = ref(null);
+    const lyricScrollRef = ref(null);
+    const lyricListRef = ref(null);
+    const playingLyric = ref("");
+    const middleRStyle = ref("");
+    const currentLyric = ref({});
+    const currentLineNum = ref("");
 
     return {
       audioRef,
-      wrapperRef,
       fullScreen,
       currentSong,
       currentTime,
@@ -232,6 +307,7 @@ export default defineComponent({
       audioPause,
       audioReady,
       audioError,
+      audioEnded,
       audioUpdateTime,
       handleTogglePlay,
       handlePrev,
@@ -241,6 +317,23 @@ export default defineComponent({
       toggleFavorite,
       getFavoriteIcon,
       formatTime,
+      onProgressChanging,
+      onProgressChanged,
+      // cd
+      cdCls,
+      onMiddleTouchStart,
+      onMiddleTouchMove,
+      onMiddleTouchEnd,
+      middleLStyle,
+      cdWrapperRef,
+      cdRef,
+      cdImageRef,
+      lyricScrollRef,
+      lyricListRef,
+      playingLyric,
+      middleRStyle,
+      currentLyric,
+      currentLineNum,
     };
   },
 });
