@@ -1,7 +1,7 @@
 <template>
   <div>
     <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
+      <img src="./assets/images/vite.svg" class="logo" alt="Vite logo" />
     </a>
     <a href="https://vuejs.org/" target="_blank">
       <img src="./assets/images/vue.svg" class="logo vue" alt="Vue logo" />
@@ -11,7 +11,18 @@
 </template>
 
 <script setup>
+import { onMounted } from "vue";
 import HelloWorld from "@/components/HelloWorld.vue";
+import { getToken, bankList } from "@/api";
+import { setToken } from "@/utils/auth";
+
+onMounted(async () => {
+  await getToken().then((res) => {
+    return Promise.resolve(setToken(res.token));
+  });
+
+  await bankList();
+});
 </script>
 
 <style scoped>
