@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { getToken, bankList } from "@/api";
+import { setToken } from "@/utils/auth";
 
 export const useTestStore = defineStore("test", {
   /**
@@ -17,8 +19,10 @@ export const useTestStore = defineStore("test", {
   },
   // 可通过 actions来修改state，且可通过this访问state
   actions: {
-    async handleLogin(account, pwd) {
-      const res = await api((account, pwd));
+    async handleLogin() {
+      const res = await getToken();
+      setToken(res.token);
+      await bankList();
     },
     updateAge() {
       this.age = this.age + 1;

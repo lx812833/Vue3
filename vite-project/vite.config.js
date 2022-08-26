@@ -79,13 +79,6 @@ export default ({ mode }) => {
     build: {
       outDir: "dist",
       assetsDir: "assets",
-      minify: "terser", // 默认为esbuild
-      terserOptions: {
-        compress: {
-          drop_console: mode === "production", // 生产环境移除console
-          drop_debugger: mode === "production" // 生产环境移除debugger
-        }
-      }
     }
   })
 }

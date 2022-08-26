@@ -12,16 +12,12 @@
 
 <script setup>
 import { onMounted } from "vue";
+import { useTestStore } from "@/store/test";
 import HelloWorld from "@/components/HelloWorld.vue";
-import { getToken, bankList } from "@/api";
-import { setToken } from "@/utils/auth";
 
-onMounted(async () => {
-  await getToken().then((res) => {
-    return Promise.resolve(setToken(res.token));
-  });
-
-  await bankList();
+onMounted(() => {
+  const testStore = useTestStore();
+  testStore.handleLogin();
 });
 </script>
 
