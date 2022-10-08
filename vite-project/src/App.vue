@@ -8,16 +8,21 @@
     </a>
   </div>
   <HelloWorld msg="Vite + Vue" />
+  <br>
+  <br>
+  <br>
+  <ReactBlock />
 </template>
 
 <script setup>
 import { onMounted } from "vue";
 import { useTestStore } from "@/store/test";
-import HelloWorld from "@/components/HelloWorld.vue";
+import HelloWorld from "@/components/helloWorld.vue";
+import ReactBlock from "@/components/rectBlock.vue";
 
 onMounted(() => {
-  const testStore = useTestStore();
-  testStore.handleLogin();
+  // const testStore = useTestStore();
+  // testStore.handleLogin();
 });
 </script>
 
