@@ -1,26 +1,28 @@
 <template>
+	<STree :data="treeData" />
+
 	<div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="./assets/images/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/images/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-    <h3>{{ number }}</h3>
-  </div>
-  <HelloWorld
-    ref="hello"
-    msg="Vite + Vue"
-    @increase="increaseNumber"
-    @update="updateNumber"
-  />
-  <br />
-  <br />
-  <br />
-  <ReactBlock />
-  <br />
-  <br />
-  <br />
+		<a href="https://vitejs.dev" target="_blank">
+			<img src="./assets/images/vite.svg" class="logo" alt="Vite logo" />
+		</a>
+		<a href="https://vuejs.org/" target="_blank">
+			<img src="./assets/images/vue.svg" class="logo vue" alt="Vue logo" />
+		</a>
+		<h3>{{ number }}</h3>
+	</div>
+	<HelloWorld
+		ref="hello"
+		msg="Vite + Vue"
+		@increase="increaseNumber"
+		@update="updateNumber"
+	/>
+	<br />
+	<br />
+	<br />
+	<ReactBlock />
+	<br />
+	<br />
+	<br />
 	<VModel v-model:test1="test1" v-model:test2="test2" />
 
 	<van-button type="success" @click="updateTest(1)">Test1</van-button>
@@ -33,6 +35,26 @@ import { useTestStore } from "@/store/test";
 import HelloWorld from "@/components/helloWorld.vue";
 import ReactBlock from "@/components/rectBlock.vue";
 import VModel from "@/components/vModel.vue";
+import STree from "@/components/Tree";
+
+const treeData = ref([
+	{
+		label: "一级 1",
+		level: 1,
+		children: [
+			{
+				label: "二级 1-1",
+				level: 2,
+				children: [
+					{
+						level: 3,
+						label: "三级 1-1-1",
+					},
+				],
+			},
+		],
+	},
+]);
 
 const hello = ref(null);
 const number = ref(0);

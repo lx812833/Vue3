@@ -1,5 +1,7 @@
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
+import vueJsx from "@vitejs/plugin-vue-jsx";
+import svgLoader from "vite-svg-loader";
 import Components from "unplugin-vue-components/vite";
 import { VantResolver } from "unplugin-vue-components/resolvers";
 import postcssPxToViewport from "postcss-px-to-viewport";
@@ -13,6 +15,8 @@ export default ({ mode }) => {
     base: "./",
     plugins: [
       vue(),
+      vueJsx(),
+      svgLoader(),
       Components({
         resolvers: [VantResolver()],
       }),
