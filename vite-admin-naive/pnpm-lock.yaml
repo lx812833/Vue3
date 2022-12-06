@@ -4,6 +4,7 @@ specifiers:
   '@vitejs/plugin-vue': ^3.2.0
   sass: ^1.56.1
   vite: ^3.2.3
+  vite-plugin-vue-setup-extend: ^0.4.0
   vue: ^3.2.41
 
 dependencies:
@@ -13,6 +14,7 @@ devDependencies:
   '@vitejs/plugin-vue': 3.2.0_vite@3.2.5+vue@3.2.45
   sass: 1.56.1
   vite: 3.2.5_sass@1.56.1
+  vite-plugin-vue-setup-extend: 0.4.0_vite@3.2.5
 
 packages:
 
@@ -554,6 +556,16 @@ packages:
     engines: {node: '>=8.0'}
     dependencies:
       is-number: 7.0.0
+    dev: true
+
+  /vite-plugin-vue-setup-extend/0.4.0_vite@3.2.5:
+    resolution: {integrity: sha512-WMbjPCui75fboFoUTHhdbXzu4Y/bJMv5N9QT9a7do3wNMNHHqrk+Tn2jrSJU0LS5fGl/EG+FEDBYVUeWIkDqXQ==}
+    peerDependencies:
+      vite: '>=2.0.0'
+    dependencies:
+      '@vue/compiler-sfc': 3.2.45
+      magic-string: 0.25.9
+      vite: 3.2.5_sass@1.56.1
     dev: true
 
   /vite/3.2.5_sass@1.56.1:
