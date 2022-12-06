@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
-import { wrapperEnv } from './build/utils';
+import { wrapperEnv, createProxy } from './build/utils';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
@@ -28,5 +28,10 @@ export default defineConfig(({ command, mode }) => {
         },
       },
     },
+    server: {
+      host: '0.0.0.0',  // 默认为'127.0.0.1'
+      port: VITE_PORT,  // 端口
+      proxy: createProxy(VITE_PROXY), // 代理
+    }
   }
 })
