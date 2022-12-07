@@ -1,0 +1,21 @@
+.wrapper {
+	margin-top: 50px;
+	padding-left: 50px;
+	color: #000;
+	.row {
+		display: flex;
+		align-items: center;
+		height: 24px;
+		font-size: 14px;
+		.icon {
+			margin-right: 5px;
+			width: 16px;
+			height: 16px;
+		}
+		.indent {
+			display: inline-block;
+			width: 16px;
+			height: 16px;
+		}
+	}
+}

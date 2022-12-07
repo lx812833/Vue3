@@ -1,5 +1,5 @@
 <template>
-	<STree :data="treeData" />
+	<STree :treeData="treeData" />
 
 	<div>
 		<a href="https://vitejs.dev" target="_blank">
@@ -53,6 +53,10 @@ const treeData = ref([
 				],
 			},
 		],
+	},
+	{
+		label: "二级 1",
+		level: 1,
 	},
 ]);
 

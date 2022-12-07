@@ -83,6 +83,10 @@ export default ({ mode }) => {
     build: {
       outDir: "dist",
       assetsDir: "assets",
+    },
+    esbuild: {
+      jsxFactory: 'h',
+      jsxFragment: 'Fragment'
     }
   })
 }
