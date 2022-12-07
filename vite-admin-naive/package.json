@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "axios": "^1.2.1",
-    "vue": "^3.2.41"
+    "vue": "^3.2.41",
+    "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@unocss/preset-attributify": "^0.47.5",
