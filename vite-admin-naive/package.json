@@ -21,8 +21,6 @@
     "@unocss/preset-icons": "^0.47.5",
     "@unocss/preset-uno": "^0.47.5",
     "@vitejs/plugin-vue": "^3.2.0",
-    "eslint": "^8.29.0",
-    "eslint-plugin-vue": "^9.8.0",
     "mockjs": "^1.1.0",
     "naive-ui": "^2.34.2",
     "sass": "^1.56.1",

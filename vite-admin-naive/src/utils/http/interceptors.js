@@ -1,4 +1,6 @@
 import { isNullOrUndef } from '@/utils/is';
+import { toLogin } from '@/utils/auth';
+import { isWithoutToken } from './helpers';
 
 export function reqResolve(config) {
   // 防止缓存，给get请求加上时间戳
@@ -6,6 +8,20 @@ export function reqResolve(config) {
     config.params = { ...config.params, t: new Date().getTime() };
   }
 
+  // 处理不需要token的请求
+  if (isWithoutToken(config)) {
+    return config;
+  }
+
+  const token = getToken();
+  if (!token) {
+    /**
+     * * 未登录或者token过期的情况下
+     * * 跳转登录页重新登录，携带当前路由及参数，登录成功会回到原来的页面
+     */
+    toLogin();
+    return Promise.reject({ code: '-1', message: '未登录' });
+  }
   return config;
 }
 
