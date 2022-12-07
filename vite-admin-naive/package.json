@@ -11,6 +11,7 @@
     "lint:fix": "eslint --fix --ext .js,.vue ."
   },
   "dependencies": {
+    "axios": "^1.2.1",
     "vue": "^3.2.41"
   },
   "devDependencies": {
