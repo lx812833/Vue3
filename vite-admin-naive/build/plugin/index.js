@@ -14,6 +14,13 @@ import VueSetupExtend from 'vite-plugin-vue-setup-extend';
 import Components from 'unplugin-vue-components/vite';
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 
+/**
+ * 开启mock
+ * @returns 
+ */
+
+import { configMockPlugin } from './mock';
+
 export function createVitePlugins(viteEnv, isBuild) {
   const plugins = [
     vue(),
@@ -24,5 +31,9 @@ export function createVitePlugins(viteEnv, isBuild) {
     }),
   ]
 
+  if (viteEnv?.VITE_APP_USE_MOCK) {
+    plugins.push(configMockPlugin(isBuild));
+  }
+  
   return plugins;
 }

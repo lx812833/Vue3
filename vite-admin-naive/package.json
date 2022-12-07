@@ -21,11 +21,13 @@
     "@vitejs/plugin-vue": "^3.2.0",
     "eslint": "^8.29.0",
     "eslint-plugin-vue": "^9.8.0",
+    "mockjs": "^1.1.0",
     "naive-ui": "^2.34.2",
     "sass": "^1.56.1",
     "unocss": "^0.47.5",
     "unplugin-vue-components": "^0.22.11",
     "vite": "^3.2.3",
+    "vite-plugin-mock": "^2.9.6",
     "vite-plugin-vue-setup-extend": "^0.4.0"
   }
 }

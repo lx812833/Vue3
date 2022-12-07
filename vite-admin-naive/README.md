@@ -7,3 +7,10 @@
 vite-plugin-vue-setup-extend：扩展setup插件，支持在script标签中使用name属性
 vite-plugin-html：一个针对 index.html，提供压缩和基于 ejs 模板功能的 vite 插件，主要是为了对 index.html 进行压缩和注入动态数据，例如替换网站标题和cdn
 unocss： 出自antfu的原子化css
+
+
+### mock集成
+
+#### 安装 vite-plugin-mock 和 mockjs
+
+pnpm i vite-plugin-mock mockjs -D
