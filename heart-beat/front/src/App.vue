@@ -7,8 +7,21 @@ import Ws from "./webSocket";
 
 let ws = null;
 
-const handleInit = async () => {
-	ws = await Ws.create("ws://127.0.0.1:8000");
+const wsConnect = () => {
+	ws = Ws.create("ws://127.0.0.1:8000", wsReConnect);
+};
+
+// 重连
+const wsReConnect = () => {
+	if (!ws) {
+		return wsConnect();
+	}
+
+	if (ws && ws.reconnectingTimer) {
+		clearTimeout(ws.reconnectingTimer);
+		ws.reconnectingTimer = null;
+		wsConnect();
+	}
 };
 
 const handleSend = () => {
@@ -20,7 +33,7 @@ const handleSend = () => {
 	}
 };
 
-handleInit();
+wsConnect();
 </script>
 
 <style scoped></style>
