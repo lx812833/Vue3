@@ -13,7 +13,7 @@ function handleConnection(ws) {
 }
 
 function handleClose() {
-  console.log("---Server is closed---");
+  console.log('---Server is closed---');
 
   this.send(JSON.stringify({
     mode: "MESSAGE",

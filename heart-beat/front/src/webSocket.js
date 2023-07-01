@@ -4,17 +4,18 @@ const WS_MODE = {
 }
 
 class Ws extends WebSocket {
-  constructor(url) {
+  constructor(url, wsReConnect) {
     super(url);
     this.wsUrl = url;
-    this.connectedStatus = false; // 连接状态
-    this.heartBeatTimer = null;
-    this.heartBeatTimer = null;
+    this.heartBeatTimer = null; // 心跳定时器
+    this.reconnectingTimer = null; // 重连定时器
+    this.wsReConnect = wsReConnect; // 断开重连方法
+
     this.init();
   }
 
-  static create(url) {
-    return new Ws(url);
+  static create(url, wsReConnect) {
+    return new Ws(url, wsReConnect);
   }
 
   init() {
@@ -30,8 +31,6 @@ class Ws extends WebSocket {
 
   handleOpen() {
     console.log("---Client is connected---");
-
-    this.connectedStatus = true;
     this.startHeartBeat();
   }
 
@@ -39,37 +38,68 @@ class Ws extends WebSocket {
     console.log("---Client is closed---");
 
     this.connectedStatus = false;
-    if (this.heartBeatTimer) {
-      clearInterval(this.heartBeatTimer);
-      this.heartBeatTimer = null;
+    if (heartBeatTimer) {
+      clearInterval(heartBeatTimer);
+      heartBeatTimer = null;
     }
-    if (this.heartBeatTimer) {
-      clearTimeout(this.heartBeatTimer);
-      this.heartBeatTimer = null;
+    if (reconnectTimer) {
+      clearTimeout(reconnectTimer);
+      reconnectTimer = null;
     }
+
     this.reconnect();
   }
 
   handleError(e) {
-    console.log("---Client error---", e);
-
-    this.connectedStatus = false;
+    console.log("---Client occured error---", e);
     this.reconnect();
   }
 
   handleMessage(data) {
     const { mode, msg } = this.receiveMsg(data);
+
     switch (mode) {
-      case WS_MODE.MESSAGE:
-        console.log("--- 客户端MESSAGE ---", msg);
-        break;
       case WS_MODE.HEART_BEAT:
-        this.connectedStatus = true;
-        console.log("--- 客户端HEART_BEAT ---", msg);
+        console.log("---HEART_BEAT---", msg);
+        break;
+      case WS_MODE.MESSAGE:
+        console.log("---MESSAGE---", msg);
         break;
       default:
         break;
     }
+  }
+
+  // 开启心跳连接
+  startHeartBeat() {
+    this.this.heartBeatTimer = setInterval(() => {
+      if (this.this.readyState === 1) {
+        this.sendMsg({
+          mode: WS_MODE.HEART_BEAT,
+          msg: "HEART_BEAT"
+        });
+      } else {
+        clearInterval(this.this.heartBeatTimer);
+        this.this.heartBeatTimer = null;
+      }
+
+      // 模拟websocket断开重连
+      this.waitForResponse();
+    }, 14000);
+  }
+
+  // 重连
+  reconnect() {
+    this.reconnectingTimer = setTimeout(() => {
+      this.wsReConnect();
+    }, 3000);
+  }
+
+  // 模拟关闭服务
+  waitForResponse() {
+    setTimeout(() => {
+      this.close();
+    }, 2000);
   }
 
   receiveMsg({ data }) {
@@ -77,43 +107,7 @@ class Ws extends WebSocket {
   }
 
   sendMsg(data) {
-    return this.send(JSON.stringify(data));
-  }
-
-  // 开启心跳连接
-  startHeartBeat() {
-    this.heartBeatTimer = setInterval(() => {
-      if (this.heartBeatTimer) {
-        this.sendMsg({
-          mode: WS_MODE.HEART_BEAT,
-          msg: "WS_MODE.HEART_BEAT"
-        })
-      } else {
-        clearInterval(this.heartBeatTimer);
-        this.heartBeatTimer = null;
-      }
-
-      this.waitForResponse();
-    }, 14000);
-  }
-
-  // 重连
-  reconnect() {
-    console.log("--- 客户端重连 ---");
-    return new Promise(resolve => {
-      this.heartBeatTimer = setTimeout(() => {
-        resolve(Ws.create(this.wsUrl));
-      }, 14000);
-    })
-  }
-
-  // 模拟关闭服务
-  waitForResponse() {
-    this.connectedStatus = false;
-
-    setTimeout(() => {
-      this.close();
-    }, 2000);
+    this.readyState === 1 && this.send(JSON.stringify(data));
   }
 }
 
