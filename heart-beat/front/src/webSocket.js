@@ -1,6 +1,3 @@
-let heartBeatTimer = null;
-let reconnectTimer = null;
-
 const WS_MODE = {
   MESSAGE: "MESSAGE",
   HEART_BEAT: "HEART_BEAT",
@@ -9,9 +6,10 @@ const WS_MODE = {
 class Ws extends WebSocket {
   constructor(url) {
     super(url);
-    this.connectedStatus = false; // 连接状态
     this.wsUrl = url;
-
+    this.connectedStatus = false; // 连接状态
+    this.heartBeatTimer = null;
+    this.heartBeatTimer = null;
     this.init();
   }
 
@@ -20,7 +18,6 @@ class Ws extends WebSocket {
   }
 
   init() {
-    console.log(123);
     this.bindEvent();
   }
 
@@ -42,13 +39,13 @@ class Ws extends WebSocket {
     console.log("---Client is closed---");
 
     this.connectedStatus = false;
-    if (heartBeatTimer) {
-      clearInterval(heartBeatTimer);
-      heartBeatTimer = null;
+    if (this.heartBeatTimer) {
+      clearInterval(this.heartBeatTimer);
+      this.heartBeatTimer = null;
     }
-    if (reconnectTimer) {
-      clearTimeout(reconnectTimer);
-      reconnectTimer = null;
+    if (this.heartBeatTimer) {
+      clearTimeout(this.heartBeatTimer);
+      this.heartBeatTimer = null;
     }
     this.reconnect();
   }
@@ -85,28 +82,28 @@ class Ws extends WebSocket {
 
   // 开启心跳连接
   startHeartBeat() {
-    heartBeatTimer = setInterval(() => {
-      if (heartBeatTimer) {
+    this.heartBeatTimer = setInterval(() => {
+      if (this.heartBeatTimer) {
         this.sendMsg({
           mode: WS_MODE.HEART_BEAT,
           msg: "WS_MODE.HEART_BEAT"
         })
       } else {
-        clearInterval(heartBeatTimer);
-        heartBeatTimer = null;
+        clearInterval(this.heartBeatTimer);
+        this.heartBeatTimer = null;
       }
 
       this.waitForResponse();
-    }, 4000);
+    }, 14000);
   }
 
   // 重连
   reconnect() {
     console.log("--- 客户端重连 ---");
     return new Promise(resolve => {
-      reconnectTimer = setTimeout(() => {
+      this.heartBeatTimer = setTimeout(() => {
         resolve(Ws.create(this.wsUrl));
-      }, 4000);
+      }, 14000);
     })
   }
 
@@ -115,10 +112,6 @@ class Ws extends WebSocket {
     this.connectedStatus = false;
 
     setTimeout(() => {
-      if(this.connectedStatus) {
-        return this.startHeartBeat();
-      }
-
       this.close();
     }, 2000);
   }
