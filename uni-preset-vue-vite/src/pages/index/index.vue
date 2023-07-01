@@ -8,10 +8,10 @@
 </template>
 
 <script setup>
-import { useUserStore } from "@/store/user";
+import useStore from "@/store";
+const { user } = useStore();
 
-const userInfo = useUserStore();
-const title = `hello ${userInfo.name}`;
+const title = `hello ${user.name}`;
 </script>
 
 <style>
