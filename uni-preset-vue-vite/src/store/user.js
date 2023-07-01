@@ -3,14 +3,11 @@ import { defineStore } from "pinia";
 export const useUserStore = defineStore("user", {
   state: () => ({
     name: "lx",
-    isAdmin: true,
+    count: 0,
   }),
   actions: {
-    logout() {
-      this.$patch({
-        name: "",
-        isAdmin: false,
-      })
+    setCount() {
+      this.count++;
     },
   }
 })

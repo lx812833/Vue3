@@ -1,8 +1,8 @@
 <template>
 	<view class="content">
-		<image class="logo" src="/static/logo.png"></image>
+		<image class="logo" src="/static/logo.png" @click="handleAddCount"></image>
 		<view class="text-area">
-			<text class="title">{{ title }}</text>
+			<text class="title">{{ title }}~{{ user.count }}</text>
 		</view>
 	</view>
 </template>
@@ -12,6 +12,10 @@ import useStore from "@/store";
 const { user } = useStore();
 
 const title = `hello ${user.name}`;
+
+const handleAddCount = () => {
+  user.setCount();
+}
 </script>
 
 <style>
