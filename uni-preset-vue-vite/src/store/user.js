@@ -2,12 +2,13 @@ import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
-    name: "lx",
-    count: 0,
+    userInfo: {
+      name: "lx",
+    }
   }),
   actions: {
-    setCount() {
-      this.count++;
+    setUserInfo(data) {
+      this.userInfo = { ...data };
     },
   }
 })

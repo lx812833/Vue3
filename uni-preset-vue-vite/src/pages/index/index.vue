@@ -9,13 +9,24 @@
 
 <script setup>
 import useStore from "@/store";
+import { wxLogin, getPhoneNumber } from "@/api/user.js";
+
 const { user } = useStore();
+const title = `hello~`;
 
-const title = `hello ${user.name}`;
-
-const handleAddCount = () => {
-  user.setCount();
-}
+const handleAddCount = async () => {
+	uni.login({
+		provider: "weixin",
+		success: (loginRes) => {
+      console.log("登录的", loginRes);
+			const jsCode = loginRes.code;
+			wxLogin({ jsCode }).then((res) => {
+				const { openId } = res.data;
+				user.setUserInfo({ openId });
+			});
+		},
+	});
+};
 </script>
 
 <style>
