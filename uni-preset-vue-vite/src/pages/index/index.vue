@@ -4,6 +4,8 @@
 		<view class="text-area">
 			<text class="title">{{ title }}~{{ user.count }}</text>
 		</view>
+
+    <uni-icons type="bars" size="16" />
 	</view>
 </template>
 
@@ -12,7 +14,7 @@ import useStore from "@/store";
 import { wxLogin, getPhoneNumber } from "@/api/user.js";
 
 const { user } = useStore();
-const title = `hello~`;
+const title = `hello`;
 
 const handleAddCount = async () => {
 	uni.login({
