@@ -72,14 +72,14 @@ class Ws extends WebSocket {
 
   // 开启心跳连接
   startHeartBeat() {
-    this.this.heartBeatTimer = setInterval(() => {
-      if (this.this.readyState === 1) {
+   this.heartBeatTimer = setInterval(() => {
+      if (this.readyState === 1) {
         this.sendMsg({
           mode: WS_MODE.HEART_BEAT,
           msg: "HEART_BEAT"
         });
       } else {
-        clearInterval(this.this.heartBeatTimer);
+        clearInterval(this.heartBeatTimer);
         this.this.heartBeatTimer = null;
       }
 
