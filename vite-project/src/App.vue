@@ -39,7 +39,7 @@ import STree from "@/components/Tree";
 
 const treeData = ref([
 	{
-		label: "一级 1",
+		label: "一级 11",
 		level: 1,
 		children: [
 			{
